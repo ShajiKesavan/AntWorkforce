@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        >
+
+    <com.sample.poc.Widgets.CircularImageView
+        android:id="@+id/img_pic"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/unknown" />
+
+        <TextView
+            android:id="@+id/feedback_name"
+            android:text="Visakh VJ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            android:layout_marginLeft="6dp"/>
+
+    </LinearLayout>
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:isIndicator="true"
+        android:max="5"
+        android:rating="5"
+        android:stepSize="1"
+        style = "?android:attr/ratingBarStyleSmall"/>
+
+    <TextView
+        android:id="@+id/feedback_value"
+        android:text="Experienced person with good behavior"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"/>
+</LinearLayout>

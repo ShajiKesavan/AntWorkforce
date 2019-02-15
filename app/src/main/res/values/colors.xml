@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="button_color">#03A9F4</color>
+    <color name="colorPrimaryLight">#6fbbf7</color>
+
+
+    <color name="bg_color">#f5f4f4</color>
+    <color name="card_color">#ffffff</color>
+    <color name="title">#222222</color>
+    <color name="link">#0000EE</color>
+    <color name="approved_color">#0f8406</color>
+    <color name="submit_color">#990e04</color>
+</resources>
