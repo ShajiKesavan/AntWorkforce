@@ -1,5 +1,7 @@
 package com.sample.poc.Activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,11 +30,7 @@ public class FeedbackActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         feedbackListItems= new ArrayList<>();
         listFeedback=(RecyclerView)findViewById(R.id.listFeedback);
 
@@ -42,10 +40,8 @@ public class FeedbackActivity extends AppCompatActivity {
         listFeedback.setItemAnimator(new DefaultItemAnimator());
         listFeedback.setAdapter(feedbackListAdapter);
 
-
-        preparePostedJobData();
+        prepareFeedbackData();
     }
-
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -53,16 +49,35 @@ public class FeedbackActivity extends AppCompatActivity {
         return true;
     }
 
-
     void preparePostedJobData()
     {
 
-        FeedbackListItem feedbackListItem=new FeedbackListItem("","Stephen Flemming",4,"Excellent Communication skills",R.drawable.unknown);
+        FeedbackListItem feedbackListItem=new FeedbackListItem("","Stephen Flemming",4,
+                "Excellent Communication skills",R.drawable.unknown);
         feedbackListItems.add(feedbackListItem);
-        feedbackListItem=new FeedbackListItem("","Jose Ricardo",1,"Poor performance",R.drawable.unknown);
+        feedbackListItem=new FeedbackListItem("","Jose Ricardo",1,
+                "Poor performance",R.drawable.unknown);
         feedbackListItems.add(feedbackListItem);
 
         feedbackListAdapter.notifyDataSetChanged();
     }
 
+    void prepareFeedbackData()
+    {
+
+        int totalCnt=InterestedListAdapter.interestItem.getFeedbackListItems().size();
+        for(int i=0;i<totalCnt;i++)
+        {
+            FeedbackListItem feedbackListItem=new FeedbackListItem("","",
+                    InterestedListAdapter.interestItem.getFeedbackListItems().get(i).getRating(),
+                    InterestedListAdapter.interestItem.getFeedbackListItems().get(i).getFeedbackData(),R.drawable.unknown);
+            feedbackListItems.add(feedbackListItem);
+        }
+
+        feedbackListAdapter.notifyDataSetChanged();
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }

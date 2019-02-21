@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.sample.poc.Activities.DashboardActivity;
 import com.sample.poc.Adapter.AcceptedJobsAdapter;
@@ -27,14 +28,19 @@ import java.util.List;
  * Created by 1013373 on 7/31/2018.
  */
 
-public class AcceptedJobsFragment extends Fragment {
+public class MyShiftsFragment extends Fragment {
 
 
     private List<AcceptedJobsItem> acceptedJobsItems = new ArrayList<>();
+    private List<AcceptedJobsItem> interestedItems = new ArrayList<>();
+    private List<AcceptedJobsItem> confirmedItems = new ArrayList<>();
 
     RecyclerView listAcceptedJobs;
-    AcceptedJobsAdapter acceptedJobsAdapter;
-    public AcceptedJobsFragment() {
+    public static AcceptedJobsAdapter acceptedJobsAdapter;
+    TextView empty;
+    public static MyShiftsFragment instance;
+    public static boolean mRefreshNow = false;
+    public MyShiftsFragment() {
         // Required empty public constructor
     }
 
@@ -48,6 +54,8 @@ public class AcceptedJobsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View parentView = inflater.inflate(R.layout.fragment_accepted_jobs, container, false);
         listAcceptedJobs = (RecyclerView) parentView.findViewById(R.id.listAcceptedJobs);
+        empty = (TextView) parentView.findViewById(R.id.empty);
+        instance = this;
         acceptedJobsItems = new ArrayList<>();
 
         acceptedJobsAdapter = new AcceptedJobsAdapter(acceptedJobsItems, getActivity());
@@ -61,6 +69,10 @@ public class AcceptedJobsFragment extends Fragment {
         //preparePostedJobData();
         getAcceptedJobs(DashboardActivity.shiftsJs);
         return parentView;
+    }
+
+    public static MyShiftsFragment getinstance() {
+        return instance;
     }
 
 
@@ -84,26 +96,68 @@ public class AcceptedJobsFragment extends Fragment {
 
         try {
             System.out.println("responseFromcmpltd2 :" + postResponse.toString());
+            listAcceptedJobs.setVisibility(View.VISIBLE);
+            empty.setVisibility(View.GONE);
             AcceptedJobsItem acceptedJobsItem;
             JSONArray jArray = new JSONArray(postResponse);
             JSONObject jObject = null;
-            for (int i = 0; i < jArray.length(); i++) {
-                jObject = jArray.getJSONObject(i);
-                String id = jObject.getString("id");
-                String jobPostId = jObject.getString("jobPostId");
-                String roleName = jObject.getString("roleName");
-                String rate = jObject.getString("rate");
-                String duration = jObject.getString("duration");
-                String date = jObject.getString("startDateTime");
-                String employerName = jObject.getString("employerName");
-                String employerAddress = jObject.getString("employerAddress");
+            String employerName = "";
+            acceptedJobsItems.clear();
+            confirmedItems.clear();
+            interestedItems.clear();
+            if (jArray.length() > 0){
+                for (int i = 0; i < jArray.length(); i++) {
+                    jObject = jArray.getJSONObject(i);
+                    String id = jObject.getString("id");
+                    String jobPostId = jObject.getString("jobPostId");
+                    String roleName = jObject.getString("roleName");
+                    String rate = jObject.getString("rate");
+                    String duration = jObject.getString("duration");
+                    String date = jObject.getString("startDateTime");
+                    if (jObject.toString().contains("employerName"))
+                        employerName = jObject.getString("employerName");
+                    String employerAddress = jObject.getString("employerAddress");
+                    String status = jObject.getString("shiftStatus");
 
-                acceptedJobsItem = new AcceptedJobsItem(date, id + "@@" + jobPostId + "@@" + employerAddress, roleName,
-                        "£" + rate + "/Hour", duration + " Hours", "7.6 miles", employerName, "");
-                acceptedJobsItems.add(acceptedJobsItem);
-            }
+                    acceptedJobsItem = new AcceptedJobsItem(date, id + "@@" + jobPostId, roleName,
+                            "£" + rate + "/Hour", duration + " Hours", "7.6 miles",
+                            employerName + "," + employerAddress, status);
+                    if(status.equals("ACCEPTED"))
+                        acceptedJobsItems.add(acceptedJobsItem);
+                    else if(status.equals("CONFIRMED"))
+                        confirmedItems.add(acceptedJobsItem);
+                    else
+                        interestedItems.add(acceptedJobsItem);
+                }
+                acceptedJobsItems.addAll(confirmedItems);
+                acceptedJobsItems.addAll(interestedItems);
             acceptedJobsAdapter.notifyDataSetChanged();
+        } else {
+                listAcceptedJobs.setVisibility(View.GONE);
+                empty.setVisibility(View.VISIBLE);
+            }
         } catch (Exception e) {
+            e.printStackTrace();
+            listAcceptedJobs.setVisibility(View.GONE);
+            empty.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        if(mRefreshNow) {
+            System.out.println("cmplt onResume:"+mRefreshNow);
+            mRefreshNow = false;
+            getAcceptedJobs(DashboardActivity.shiftsJs);
+        }
+        super.onResume();
+    }
+
+    public static void refreshAll(){
+        try {
+            getinstance().onResume();
+            acceptedJobsAdapter.notifyDataSetChanged();
+        }catch (Exception e){
             e.printStackTrace();
         }
     }

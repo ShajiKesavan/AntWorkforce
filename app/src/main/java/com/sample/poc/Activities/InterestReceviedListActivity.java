@@ -1,5 +1,6 @@
 package com.sample.poc.Activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -38,7 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InterestReceviedListActivity extends AppCompatActivity {
+public class InterestReceviedListActivity extends Activity {
 
     RecyclerView listInterestReceived;
     InterestedListAdapter interestedListAdapter;
@@ -90,22 +91,26 @@ public class InterestReceviedListActivity extends AppCompatActivity {
         listInterestReceived.setLayoutManager(mLayoutManager);
         listInterestReceived.setItemAnimator(new DefaultItemAnimator());
         listInterestReceived.setAdapter(interestedListAdapter);
-
-        getInterestResponse(Integer.valueOf(jobId), Integer.valueOf(PreferenceHelper.getUserId_PREF(getApplicationContext())),
-                PreferenceHelper.getUserToken_PREF(getApplicationContext()));
+        String choice = title.getText().toString();
+        if(choice.contains("Interest"))
+            getInterestResponse(Constants.BASE_URL+Constants.INTEREST_URL,Integer.valueOf(jobId),
+                Integer.valueOf(PreferenceHelper.getUserId_PREF(getApplicationContext())),
+                PreferenceHelper.getUserToken_PREF(getApplicationContext()),"Interested");
+        else if(choice.contains("Accepted"))
+            getInterestResponse(Constants.BASE_URL+Constants.ACCEPTED_LIST_URL,Integer.valueOf(jobId),
+                    Integer.valueOf(PreferenceHelper.getUserId_PREF(getApplicationContext())),
+                    PreferenceHelper.getUserToken_PREF(getApplicationContext()),"Accepted");
+        else
+            getInterestResponse(Constants.BASE_URL+Constants.CONFIRMED_LIST_URL,Integer.valueOf(jobId),
+                    Integer.valueOf(PreferenceHelper.getUserId_PREF(getApplicationContext())),
+                    PreferenceHelper.getUserToken_PREF(getApplicationContext()),"Confirmed");
        // preparePostedJobData();
     }
 
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
 
 
-
-    private void preparePostedJobData() {
+   /* private void preparePostedJobData() {
 
         ArrayList<FeedbackListItem> feedbackListItems=new ArrayList<>();
         FeedbackListItem feedbackListItem=new FeedbackListItem("","Stephen Flemming",4,"Excellent Communication skills",R.drawable.unknown);
@@ -143,19 +148,19 @@ public class InterestReceviedListActivity extends AppCompatActivity {
 
 
         interestedListAdapter.notifyDataSetChanged();
-    }
+    }*/
 
 
-    public void getInterestResponse(final int jobId, final int userId, final String token){
+    public void getInterestResponse(String Url,final int jobId, final int userId, final String token, final String status){
 
         try {
             // Make request for JSONObject
             final JsonObjectRequest jsonObjReq = new JsonObjectRequest(
-                    Request.Method.GET, Constants.BASE_URL+Constants.INTEREST_URL+jobId, null,
+                    Request.Method.GET, Url+jobId, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            System.out.println("responseFromLogin2 :" + response.toString());
+                            System.out.println("responseFromLogin2 interested response :" + response.toString());
                             try {
                                 ArrayList<FeedbackListItem> feedbackListItems=new ArrayList<>();
                                 FeedbackListItem feedbackListItem;
@@ -187,7 +192,7 @@ public class InterestReceviedListActivity extends AppCompatActivity {
                                         feedbackListItems.add(feedbackListItem);
                                     }
                                     interestListItem = new InterestListItem(name, "£"+preferredRate+"/Hour",
-                                            id, experience, imageUrl, Integer.valueOf(averageRating), R.drawable.female_1,
+                                            id, experience, imageUrl, Integer.valueOf(averageRating), R.drawable.female_1,status,
                                             feedbackListItems);
                                     interestListItems.add(interestListItem);
                                 }
@@ -252,5 +257,13 @@ public class InterestReceviedListActivity extends AppCompatActivity {
                     "Error, Please try again.",
                     Toast.LENGTH_LONG).show();
         }
+    }
+    @Override
+    public void onBackPressed() {
+        Intent in = new Intent(getApplicationContext(), DashboardActivity.class);
+        if(!InterestedListAdapter.response.equals("0"))
+        in.putExtra("dashbdJs",InterestedListAdapter.response.toString());
+        startActivity(in);
+        //super.onBackPressed();
     }
 }

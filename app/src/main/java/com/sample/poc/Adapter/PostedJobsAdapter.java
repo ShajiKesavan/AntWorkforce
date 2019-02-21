@@ -26,7 +26,7 @@ public class PostedJobsAdapter extends RecyclerView.Adapter<PostedJobsAdapter.My
     Context context;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtDateTimeValue, roleValue, rateValue,durationValue,posts,accepted,confirmed,interest_received;
+        public TextView txtDateTimeValue, roleValue, rateValue,durationValue,accepted,confirmed,interest_received;
 
         public MyViewHolder(View view) {
             super(view);
@@ -34,7 +34,6 @@ public class PostedJobsAdapter extends RecyclerView.Adapter<PostedJobsAdapter.My
             roleValue = (TextView) view.findViewById(R.id.roleValue);
             rateValue = (TextView) view.findViewById(R.id.rateValue);
             durationValue = (TextView) view.findViewById(R.id.durationValue);
-            posts = (TextView) view.findViewById(R.id.posts);
             accepted = (TextView) view.findViewById(R.id.accepted);
             confirmed = (TextView) view.findViewById(R.id.confirmed);
             interest_received = (TextView) view.findViewById(R.id.interest_received);
@@ -59,11 +58,10 @@ public class PostedJobsAdapter extends RecyclerView.Adapter<PostedJobsAdapter.My
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final PostedJobItems postedJobItem = postedJobItems.get(position);
         holder.txtDateTimeValue.setText(postedJobItem.getStartDate());
-        holder.roleValue.setText(postedJobItem.getRole());
+        holder.roleValue.setText(postedJobItem.getRole()+" ("+postedJobItem.getPostsCount()+")");
         holder.rateValue.setText(postedJobItem.getRate());
         holder.durationValue.setText(postedJobItem.getDuration());
-        holder.posts.setText(context.getResources().getString(R.string.posts)+"("+postedJobItem.getPostsCount()+")");
-        holder.accepted.setText(context.getResources().getString(R.string.accepted)+"("+postedJobItem.getAcceptedCount()+")");
+       // holder.accepted.setText(context.getResources().getString(R.string.accepted)+"("+postedJobItem.getAcceptedCount()+")");
         holder.confirmed.setText(context.getResources().getString(R.string.confirmed)+"("+postedJobItem.getConfirmedCount()+")");
 
         final String udata=context.getResources().getString(R.string.interest_received)+"("+postedJobItem.getInterestReceivedCount()+")";
@@ -79,6 +77,48 @@ public class PostedJobsAdapter extends RecyclerView.Adapter<PostedJobsAdapter.My
                     intent.putExtra("id", postedJobItem.getStartTime());
                     intent.putExtra("role", postedJobItem.getRole());
                     intent.putExtra("title", udata);
+                    intent.putExtra("rate", postedJobItem.getRate());
+                    intent.putExtra("date", postedJobItem.getStartDate());
+                    context.startActivity(intent);
+                }
+
+            }
+        });
+
+        final String udata1=context.getResources().getString(R.string.accepted)+"("+postedJobItem.getAcceptedCount()+")";
+        final SpannableString content1 = new SpannableString(udata1);
+        content1.setSpan(new UnderlineSpan(), 0, udata1.length(), 0);
+        holder.accepted.setText(content1);
+
+        holder.accepted.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(postedJobItem.getAcceptedCount()>0) {
+                    Intent intent = new Intent(context, InterestReceviedListActivity.class);
+                    intent.putExtra("id", postedJobItem.getStartTime());
+                    intent.putExtra("role", postedJobItem.getRole());
+                    intent.putExtra("title", udata1);
+                    intent.putExtra("rate", postedJobItem.getRate());
+                    intent.putExtra("date", postedJobItem.getStartDate());
+                    context.startActivity(intent);
+                }
+
+            }
+        });
+
+        final String udata2=context.getResources().getString(R.string.confirmed)+"("+postedJobItem.getConfirmedCount()+")";
+        final SpannableString content2 = new SpannableString(udata2);
+        content2.setSpan(new UnderlineSpan(), 0, udata2.length(), 0);
+        holder.confirmed.setText(content2);
+
+        holder.confirmed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(postedJobItem.getConfirmedCount()>0) {
+                    Intent intent = new Intent(context, InterestReceviedListActivity.class);
+                    intent.putExtra("id", postedJobItem.getStartTime());
+                    intent.putExtra("role", postedJobItem.getRole());
+                    intent.putExtra("title", udata2);
                     intent.putExtra("rate", postedJobItem.getRate());
                     intent.putExtra("date", postedJobItem.getStartDate());
                     context.startActivity(intent);

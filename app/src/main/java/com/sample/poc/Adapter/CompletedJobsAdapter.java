@@ -12,10 +12,13 @@ import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,8 +58,8 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
     Activity context;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtDateTimeValue, roleValue, rateValue,durationValue,txtNameValue,txtApprovalValue;
-        public Button btnApprove;
+        public TextView txtDateTimeValue, roleValue, rateValue,durationValue,txtNameValue;
+        Spinner spinnerStatus;
 
         public MyViewHolder(View view) {
             super(view);
@@ -65,8 +68,11 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
             rateValue = (TextView) view.findViewById(R.id.rateValue);
             durationValue = (TextView) view.findViewById(R.id.durationValue);
             txtNameValue = (TextView) view.findViewById(R.id.txtNameValue);
-            txtApprovalValue = (TextView) view.findViewById(R.id.txtApprovalValue);
-            btnApprove = (Button) view.findViewById(R.id.btnApprove);
+            spinnerStatus=(Spinner)view.findViewById(R.id.spinnerStatus);
+            String[] data= {"Select","Reject","Approve"};
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,android.R.layout.simple_spinner_item,data);
+            spinnerStatus .setAdapter(adapter);
+            adapter.notifyDataSetChanged();
 
         }
     }
@@ -94,84 +100,78 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
         holder.durationValue.setText(completedJobItem.getDuration());
         holder.txtNameValue.setText(completedJobItem.getName());
 
-        if(completedJobItem.getApprovalStatus().equals(Constants.PENDING))
-        {
-            holder.txtApprovalValue.setVisibility(View.GONE);
-            holder.btnApprove.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            holder.btnApprove.setVisibility(View.GONE);
-            holder.txtApprovalValue.setVisibility(View.VISIBLE);
-            holder.txtApprovalValue.setText(completedJobItem.getApprovalStatus());
-        }
-
-
-        holder.btnApprove.setOnClickListener(new View.OnClickListener() {
+        holder.spinnerStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View view) {
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(i > 0) {
+                    String status= adapterView.getItemAtPosition(i).toString();
+                    ShowFeedbackDialog(completedJobItem.getStartTime(),status);
+                }
+            }
 
-                ShowFeedbackDialog(completedJobItem.getStartTime());
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
-
-
-
 
     }
 
 
     AlertDialog dialog;
-    public void ShowFeedbackDialog(final String id) {
+    ProgressBar pgBar;
+    public void ShowFeedbackDialog(final String id, final String status) {
         LayoutInflater inflater = context.getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.feedback_dialog, null);
         final RatingBar mRating;
         final EditText mFeedback, mNotes;
-        ProgressBar pgBar;
+        Button mSubmit, mCancel;
+
         mFeedback = (EditText)alertLayout.findViewById(R.id.editTextFd);
         mNotes = (EditText)alertLayout.findViewById(R.id.editTextNotes);
         mRating = (RatingBar)alertLayout.findViewById(R.id.ratingBar);
         pgBar = (ProgressBar)alertLayout.findViewById(R.id.progressBar);
+        mSubmit = (Button)alertLayout.findViewById(R.id.button1);
+        mCancel = (Button)alertLayout.findViewById(R.id.button2);
         final AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle(context.getResources().getString(R.string.enter_feedback));
         // this is set the view from XML inside AlertDialog
         alert.setView(alertLayout);
         // disallow cancel of AlertDialog on click of back button and outside touch
         alert.setCancelable(true);
-        alert.setNegativeButton(context.getResources().getString(R.string.reject_timesheet), new DialogInterface.OnClickListener() {
+        dialog = alert.create();
 
+        mSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View view) {
                 View v= null;
                 String feedback = mFeedback.getText().toString(),
                         notes = mNotes.getText().toString();
                 double rating = mRating.getRating();
-
-             if(TextUtils.isEmpty(mNotes.getText().toString())) {
-                 mNotes.setError(AntApplication._appContext.getString(R.string.error_field_required));
-                 v = mNotes;
-                 v.requestFocus();
-             } else {
-                 FeedbackRequest(id,"REJECT",rating,feedback,notes);
-                 dialog.dismiss();
-             }
-
+                if(status.equals("Reject")) {
+                    if (TextUtils.isEmpty(mNotes.getText().toString())) {
+                        mNotes.setError(AntApplication._appContext.getString(R.string.error_field_required));
+                        v = mNotes;
+                        v.requestFocus();
+                    } else {
+                        pgBar.setVisibility(View.VISIBLE);
+                        FeedbackRequest(id, "REJECT", rating, feedback, notes);
+                        //dialog.dismiss();
+                    }
+                } else {
+                    pgBar.setVisibility(View.VISIBLE);
+                    FeedbackRequest(id, "APPROVE", rating, feedback, notes);
+                    //dialog.dismiss();
+                }
             }
         });
 
-        alert.setPositiveButton(context.getResources().getString(R.string.approve_timesheet), new DialogInterface.OnClickListener() {
-
+        mCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String feedback = mFeedback.getText().toString(),
-                        notes = mNotes.getText().toString();
-                double rating = mRating.getRating();
-                FeedbackRequest(id,"APPROVE",rating,feedback,notes);
+            public void onClick(View view) {
                 dialog.dismiss();
-
             }
         });
-        AlertDialog dialog = alert.create();
         dialog.show();
     }
 
@@ -204,6 +204,9 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
                         @Override
                         public void onResponse(JSONObject response) {
                             System.out.println("responseFrom feedback:" + response.toString());
+                            Intent in = new Intent(context, DashboardActivity.class);
+                            in.putExtra("dashbdJs",response.toString());
+                            context.startActivity(in);
 
                         }
                     }, new Response.ErrorListener() {
@@ -226,7 +229,7 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
                                 "Server Error, Please try again.",
                                 Toast.LENGTH_LONG).show();
                     }
-
+                    pgBar.setVisibility(View.GONE);
                     System.out.println("responseFromLogin err"
                             + error);
                     error.printStackTrace();
@@ -263,7 +266,7 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
             Toast.makeText(AntApplication._appContext,
                     "Error, Please try again.",
                     Toast.LENGTH_LONG).show();
-
+            pgBar.setVisibility(View.GONE);
         }
 
     }

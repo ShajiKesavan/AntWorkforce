@@ -17,6 +17,8 @@ public class Constants {
     public static final String LOGIN_URL="un-secure/authenticate/";
     public static final String DASHBOARD_URL="api/dashboard/";
     public static final String INTEREST_URL="api/shift/interests/";
+    public static final String ACCEPTED_LIST_URL="api/shift/accepted/";
+    public static final String CONFIRMED_LIST_URL="api/shift/confirmed/";
     public static final String NEW_JOB_URL="api/job-post/";
     public static final String FEEDBACK_URL="api/shift/";
     public static final String ACCEPTED_URL="api/shift/";

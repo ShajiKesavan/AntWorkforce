@@ -9,6 +9,7 @@
     <string name="name">Name</string>
     <string name="approval">Approval : </string>
     <string name="approved">Approved</string>
+    <string name="choose_status">Choose status</string>
     <string name="pending">Pending</string>
     <string name="acceptable_rate">Acceptable Rate:</string>
     <string name="regno">RegNo:</string>
@@ -18,6 +19,9 @@
     <string name="role">Role:</string>
     <string name="employer">Employer:</string>
     <string name="rate">Rate:</string>
+    <string name="select">Select</string>
+    <string name="no_completed_shifts">No Completed Shifts</string>
+    <string name="no_posted_jobs">No Posted Jobs</string>
     <string name="hour">/hour</string>
     <string name="rating">Rating</string>
     <string name="distance">Distance:</string>
@@ -25,7 +29,7 @@
     <string name="address">Address:</string>
     <string name="vacancies">Vacancies:</string>
     <string name="posts">#Posts</string>
-    <string name="prefered_rate">Preferred Rate:</string>
+    <string name="prefered_rate">My Preferred Rate:</string>
     <string name="timesheet_status">Timesheet Status:</string>
     <string name="start_date">Start Date</string>
     <string name="start_time">Start Time</string>
@@ -38,12 +42,17 @@
     <string name="accepted">#Accepted</string>
     <string name="confirmed">#Confirmed</string>
     <string name="interest_received">#Interest received</string>
+    <string name="interested"> Interested </string>
     <string name="read_more">Read More</string>
     <string name="read_less">Read Less</string>
+    <string name="no_shifts">No Shifts</string>
+    <string name="no_shifts_avail">No Shifts Available</string>
     <string name="feedback">Feedback</string>
     <string name="notes">Notes</string>
     <string name="more_feedback">More Feedback</string>
     <string name="accept">Accept</string>
+    <string name="completed_shift">Completed shifts</string>
+    <string name="posted_job">Posted jobs</string>
     <string name="enter_feedback">Please enter the feedback</string>
     <string name="post">Post Job</string>
     <string name="confirm">Confirm</string>

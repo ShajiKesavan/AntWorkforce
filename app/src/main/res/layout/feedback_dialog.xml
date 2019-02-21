@@ -8,14 +8,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp">
-
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:padding="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="5dp"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical">
 
@@ -24,6 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/rating"
+                android:layout_marginRight="10dp"
                 tools:layout_editor_absoluteX="16dp"
                 tools:layout_editor_absoluteY="25dp" />
 
@@ -37,7 +39,7 @@
                 android:rating="5"
                 android:stepSize="1"
                 android:layout_marginLeft="10dp"
-                style = "?android:attr/ratingBarStyle"/>
+                style = "?android:attr/ratingBarStyleIndicator"/>
 
     </LinearLayout>
 
@@ -57,7 +59,7 @@
             <EditText
                 android:id="@+id/editTextFd"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="60dp"
                 android:ems="10"
                 android:maxLength="250"
                 android:inputType="textMultiLine" />
@@ -80,7 +82,7 @@
             <EditText
                 android:id="@+id/editTextNotes"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="60dp"
                 android:ems="10"
                 android:maxLength="250"
                 android:inputType="textMultiLine" />
@@ -93,9 +95,29 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:layout_gravity="center"/>
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:gravity="end">
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/card_color"
+            android:background="@drawable/mybutton"
+            android:text="Submit" />
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/card_color"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/mybutton"
+                android:text="Cancel" />
+        </LinearLayout>
     </LinearLayout>
-
 
 
 </android.support.constraint.ConstraintLayout>

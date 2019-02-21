@@ -27,11 +27,10 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.sample.poc.Fragments.AcceptedJobsFragment;
-import com.sample.poc.Fragments.CompletedJobsEmployeeFragment;
 import com.sample.poc.Fragments.CompletedJobsFragment;
-import com.sample.poc.Fragments.ListjobsFragment;
-import com.sample.poc.Fragments.PostedJobsFragment;
+import com.sample.poc.Fragments.MyShiftsFragment;
+import com.sample.poc.Fragments.CompletedJobsEmployeeFragment;
+import com.sample.poc.Fragments.AvailableShiftsFragment;
 import com.sample.poc.R;
 import com.sample.poc.Utilities.Constants;
 import com.sample.poc.Utilities.PreferenceHelper;
@@ -55,8 +54,7 @@ public class DashboardActivity extends AppCompatActivity
     public String currentRole = EMPLOYEE;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    public static String postsJs, shiftsJs ,employersJs;
-    int postsJsCount=0, shiftsJsCount=0;
+    public static String postsJs, shiftsJs ,employersJs,resourceId;
     TextView name, userName;
     DrawerLayout drawer;
     @Override
@@ -116,9 +114,13 @@ public class DashboardActivity extends AppCompatActivity
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
-
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        if(!currentRole.equals(EMPLOYER)) {
+            tabLayout.setupWithViewPager(viewPager);
+        } else {
+            tabLayout.setVisibility(View.GONE);
+        }
+
         View headerView = navigationView.getHeaderView(0);
         name = (TextView)headerView.findViewById(R.id.txtName);
         userName = (TextView)headerView.findViewById(R.id.txtUsername);
@@ -126,16 +128,15 @@ public class DashboardActivity extends AppCompatActivity
         name.setText(PreferenceHelper.getName_PREF(getApplicationContext()));
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    public void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         if (currentRole.equals(EMPLOYER)) {
-            adapter.addFragment(new PostedJobsFragment(), "Posted Jobs("+postsJsCount+")");
-            adapter.addFragment(new CompletedJobsFragment(), "Completed Jobs("+shiftsJsCount+")");
+            adapter.addFragment(new CompletedJobsEmployeeFragment(), "");
         } else {
-            adapter.addFragment(new ListjobsFragment(), "List of Jobs("+postsJsCount+")");
-            adapter.addFragment(new AcceptedJobsFragment(), "Accepted Jobs("+shiftsJsCount+")");
-            adapter.addFragment(new CompletedJobsEmployeeFragment(), "Completed Jobs(4)");
+            adapter.addFragment(new AvailableShiftsFragment(), "Available shifts");
+            adapter.addFragment(new MyShiftsFragment(), "My Shifts");
+            adapter.addFragment(new CompletedJobsFragment(), "Completed Shifts");
         }
         viewPager.setAdapter(adapter);
     }
@@ -238,16 +239,12 @@ public class DashboardActivity extends AppCompatActivity
                             }
                             try {
                                 postsJs = jObject.getString("posts");
-                                JSONArray jArray = new JSONArray(postsJs);
-                                postsJsCount = jArray.length();
                                 System.out.println("postJs:"+postsJs);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                             try{
                                 shiftsJs = jObject.getString("shifts");
-                                JSONArray jArray1 = new JSONArray(shiftsJs);
-                                shiftsJsCount = jArray1.length();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -339,14 +336,12 @@ public class DashboardActivity extends AppCompatActivity
                 try {
                     postsJs = jObject.getString("posts");
                     JSONArray jArray = new JSONArray(postsJs);
-                    postsJsCount = jArray.length();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 try{
                     shiftsJs = jObject.getString("shifts");
                     JSONArray jArray1 = new JSONArray(shiftsJs);
-                    shiftsJsCount = jArray1.length();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -376,9 +371,13 @@ public class DashboardActivity extends AppCompatActivity
                                 e.printStackTrace();
                             }
                             try {
+                                resourceId = jObject.getString("resourceId");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            try {
                                 postsJs = jObject.getString("posts");
                                 JSONArray jArray = new JSONArray(postsJs);
-                                postsJsCount = jArray.length();
                                 System.out.println("postJs res:"+postsJs);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -386,7 +385,6 @@ public class DashboardActivity extends AppCompatActivity
                             try{
                                 shiftsJs = jObject.getString("shifts");
                                 JSONArray jArray1 = new JSONArray(shiftsJs);
-                                shiftsJsCount = jArray1.length();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -467,16 +465,19 @@ public class DashboardActivity extends AppCompatActivity
             e.printStackTrace();
         }
         try {
+            resourceId = jObject.getString("resourceId");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
             postsJs = jObject.getString("posts");
             JSONArray jArray = new JSONArray(postsJs);
-            postsJsCount = jArray.length();
         } catch (JSONException e) {
             e.printStackTrace();
         }
         try{
             shiftsJs = jObject.getString("shifts");
             JSONArray jArray1 = new JSONArray(shiftsJs);
-            shiftsJsCount = jArray1.length();
         } catch (JSONException e) {
             e.printStackTrace();
         }

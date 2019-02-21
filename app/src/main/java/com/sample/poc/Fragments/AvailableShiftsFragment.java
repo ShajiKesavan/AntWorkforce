@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.sample.poc.Activities.DashboardActivity;
 import com.sample.poc.Adapter.CompletedJobsAdapter;
@@ -27,14 +28,14 @@ import java.util.List;
  * Created by 1013373 on 7/31/2018.
  */
 
-public class ListjobsFragment extends Fragment {
+public class AvailableShiftsFragment extends Fragment {
 
     private List<ListJobsItem> listJobsItems = new ArrayList<>();
-
     RecyclerView listJobs;
     ListJobsAdapter listJobsAdapter;
+    TextView empty;
 
-    public ListjobsFragment() {
+    public AvailableShiftsFragment() {
         // Required empty public constructor
     }
 
@@ -48,6 +49,7 @@ public class ListjobsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View parentView = inflater.inflate(R.layout.fragment_list_jobs, container, false);
         listJobs = (RecyclerView) parentView.findViewById(R.id.listJobs);
+        empty = (TextView) parentView.findViewById(R.id.empty);
         listJobsItems = new ArrayList<>();
 
         listJobsAdapter = new ListJobsAdapter(listJobsItems, getActivity());
@@ -81,30 +83,41 @@ public class ListjobsFragment extends Fragment {
     public void getListJobs(final String postResponse){
         try {
             System.out.println("responseFrompostjb2 :" + postResponse);
+            listJobs.setVisibility(View.VISIBLE);
+            empty.setVisibility(View.GONE);
             ListJobsItem listJobsItem;
             JSONArray jArray = new JSONArray(postResponse);
             JSONObject jObject = null;
-            for (int i = 0; i < jArray.length(); i++) {
-                jObject = jArray.getJSONObject(i);
+            String employerName = "";
+            if(jArray.length() > 0) {
+                for (int i = 0; i < jArray.length(); i++) {
+                    jObject = jArray.getJSONObject(i);
 
-                String id = jObject.getString("id");
-                String roleName = jObject.getString("roleName");
-                String rate = jObject.getString("rate");
-                String duration = jObject.getString("duration");
-                String date = jObject.getString("startDateTime");
-                String vacancies = jObject.getString("vacancies");
-                String distance = jObject.getString("distance");
-                String employerName = jObject.getString("employerName");
-                String roleDescription = jObject.getString("roleDescription");
-                String employerAddress = jObject.getString("employerAddress");
-                listJobsItem = new ListJobsItem(date, id+"@@"+employerAddress+"@@"+vacancies, roleName,
-                        "£"+rate+"/Hour", duration+" Hours", distance, employerName,
-                        roleDescription,0,0);
-                listJobsItems.add(listJobsItem);
+                    String id = jObject.getString("id");
+                    String roleName = jObject.getString("roleName");
+                    String rate = jObject.getString("rate");
+                    String duration = jObject.getString("duration");
+                    String date = jObject.getString("startDateTime");
+                    String vacancies = jObject.getString("vacancies");
+                    String distance = jObject.getString("distance");
+                    if (jObject.toString().contains("employerName"))
+                        employerName = jObject.getString("employerName");
+                    String roleDescription = jObject.getString("roleDescription");
+                    String employerAddress = jObject.getString("employerAddress");
+                    listJobsItem = new ListJobsItem(date, id + "@@" + employerAddress + "@@" + vacancies, roleName,
+                            "£" + rate + "/Hour", duration + " Hours", distance, employerName,
+                            roleDescription, 0, 0);
+                    listJobsItems.add(listJobsItem);
+                }
+                listJobsAdapter.notifyDataSetChanged();
+            } else {
+                listJobs.setVisibility(View.GONE);
+                empty.setVisibility(View.VISIBLE);
             }
-            listJobsAdapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();
+            listJobs.setVisibility(View.GONE);
+            empty.setVisibility(View.VISIBLE);
         }
 
     }

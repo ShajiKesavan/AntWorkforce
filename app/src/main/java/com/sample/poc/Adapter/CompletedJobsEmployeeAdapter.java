@@ -63,7 +63,7 @@ public class CompletedJobsEmployeeAdapter extends RecyclerView.Adapter<Completed
     @Override
     public void onBindViewHolder(CompletedJobsEmployeeAdapter.MyViewHolder holder, int position) {
         CompletedEmployeeJobItem completedEmployeeJobItem= completedEmployeeJobItems.get(position);
-        holder.txtDateTimeValue.setText(completedEmployeeJobItem.getStartDate()+" "+completedEmployeeJobItem.getStartTime());
+        holder.txtDateTimeValue.setText(completedEmployeeJobItem.getStartDate());
         holder.roleValue.setText(completedEmployeeJobItem.getRole());
         holder.rateValue.setText(completedEmployeeJobItem.getRate());
         holder.durationValue.setText(completedEmployeeJobItem.getDuration());

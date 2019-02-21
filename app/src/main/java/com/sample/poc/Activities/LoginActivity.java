@@ -43,6 +43,7 @@ import com.sample.poc.Utilities.ConnectionDetector;
 import com.sample.poc.Utilities.Constants;
 import com.sample.poc.Utilities.PreferenceHelper;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -413,8 +414,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 String name = "";
                                 if(mRole.equals(Constants.EMPLOYER)){
                                     String res = response.getString("employers");
-                                    JSONObject jObject = new JSONObject(res);
-                                    name = jObject.getString("displayName");
+                                    JSONArray jArray = new JSONArray(res);
+                                    JSONObject jObject = jArray.getJSONObject(0);
+                                    name = jObject.getString("name");
                                 } else {
                                     name = "User Id: "+userId;
                                 }

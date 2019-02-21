@@ -1,18 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
-    android:layout_gravity="center"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="4dp"
-    card_view:cardBackgroundColor="@color/card_color"
-    android:layout_margin="6dp"
-    >
+    android:background="@color/colorPrimaryLight"
+    android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/ln_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_weight="3.3">
+
+            <TextView
+                android:id="@+id/statustxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Confirmed"/>
+        </LinearLayout>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#e7e4e4"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:padding="8dp">
         <LinearLayout
@@ -25,7 +46,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAllCaps="false"
-                android:textSize="16sp"
                 android:textStyle="bold"/>
             <TextView
                 android:id="@+id/txtDateTimeValue"
@@ -33,9 +53,111 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="6dp"
-                android:textSize="16sp"
                 android:textStyle="bold"/>
+
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/duration"
+            android:textAllCaps="false"/>
+
+        <TextView
+            android:id="@+id/durationValue"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="6dp"
+            android:text="8 hours"
+            android:textAllCaps="false" />
+            <LinearLayout
+                android:id="@+id/more_ln"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end">
+            <TextView
+                android:id="@+id/more"
+                android:text="@string/read_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:visibility="visible"
+                android:layout_marginRight="5dp"
+                android:textColor="@color/link"
+                android:layout_marginLeft="15dp"
+                />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ln_more"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+            <TextView
+                android:id="@+id/role"
+                android:text="@string/role"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"/>
+            <TextView
+                android:id="@+id/roleValue"
+                android:text="registered mental health nurse(RMN)"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:singleLine="true"
+                android:layout_marginLeft="6dp"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/rate"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/rate"
+                android:textAllCaps="false" />
+
+            <TextView
+                android:id="@+id/rateValue"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="6dp"
+                android:text="$20.50/hour"
+                android:textAllCaps="false" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end">
+
+                <TextView
+                    android:id="@+id/less"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/read_less"
+                    android:textAllCaps="false"
+                    android:textColor="@color/link" />
+            </LinearLayout>
+        </LinearLayout>
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,117 +172,27 @@
             <TextView
                 android:id="@+id/employerValue"
                 android:text=""
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:textAllCaps="false"
                 android:layout_marginLeft="6dp"/>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="5dp">
-            <TextView
-                android:id="@+id/role"
-                android:text="@string/role"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAllCaps="false"/>
-            <TextView
-                android:id="@+id/roleValue"
-                android:text="registered mental health nurse(RMN)"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAllCaps="false"
-                android:singleLine="true"
-                android:layout_marginLeft="6dp"/>
-            <TextView
-                android:id="@+id/more"
-                android:text="@string/read_more"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAllCaps="false"
-                android:textColor="@color/link"
-                android:layout_marginLeft="6dp"
-                />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_weight="1"
-                android:layout_marginTop="5dp">
-                <TextView
-                    android:id="@+id/rate"
-                    android:text="@string/rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textAllCaps="false"/>
-                <TextView
-                    android:id="@+id/rateValue"
-                    android:text="$20.50/hour"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textAllCaps="false"
-                    android:layout_marginLeft="6dp"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-                <TextView
-                    android:id="@+id/duration"
-                    android:text="@string/duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textAllCaps="false"/>
-                <TextView
-                    android:id="@+id/durationValue"
-                    android:text="8 hours"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textAllCaps="false"
-                    android:layout_marginLeft="6dp"/>
-            </LinearLayout>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_weight="1"
-            android:layout_marginTop="5dp">
-            <TextView
-                android:id="@+id/distance"
-                android:text="@string/distance"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAllCaps="false"/>
-            <TextView
-                android:id="@+id/distanceValue"
-                android:text="0.2 miles"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAllCaps="false"
-                android:layout_marginLeft="6dp"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_weight="1"></View>
+            android:layout_gravity="end"
+            android:gravity="end">
 
             <Button
                 android:id="@+id/btnConfirm"
-                android:layout_width="75dp"
+                android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:textColor="#ffffff"
-                android:background="#29abe2"
+                android:background="@drawable/mybutton"
                 android:textAllCaps="false"
+                android:layout_margin="5dp"
                 android:text="@string/confirm"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -168,5 +200,9 @@
 
 
     </LinearLayout>
-
-</android.support.v7.widget.CardView>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e7e4e4"/>
+</LinearLayout>

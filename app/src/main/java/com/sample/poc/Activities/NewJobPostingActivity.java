@@ -11,6 +11,8 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -49,13 +51,13 @@ import java.util.Map;
 public class NewJobPostingActivity extends AppCompatActivity {
 
     LinearLayout lnrNumberOfDays;
-    TextView edtDate;
+    EditText edtDate;
     SwitchCompat switchRepeat;
-    TextView edtTime;
+    EditText edtTime;
     Spinner spinnerRole;
     String[] data,id,rate,duration, role;
     String jobId,jobDescription,jobRate,jobDuration,jobRole;
-    EditText mHours,mRate,mDescription,mNoOfRoles;
+    EditText mHours,mRate1,mRate2,mDescription,mNoOfRoles;
     Button postBtn;
 
     @Override
@@ -63,9 +65,9 @@ public class NewJobPostingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_job_posting);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getEmployerRoles(DashboardActivity.employersJs);
         initialiseControls();
     }
@@ -78,15 +80,20 @@ public class NewJobPostingActivity extends AppCompatActivity {
         edtDate=findViewById(R.id.edtDate);
         edtTime=findViewById(R.id.edtTime);
         spinnerRole=findViewById(R.id.spinnerRole);
-        mRate=(EditText)findViewById(R.id.edtRate);
+        mRate1=(EditText)findViewById(R.id.edtRate);
+        mRate2=(EditText)findViewById(R.id.edtPreRate);
         mDescription=(EditText)findViewById(R.id.edtDesc);
         mHours=(EditText)findViewById(R.id.edtHours);
         mNoOfRoles=(EditText)findViewById(R.id.edtNOR);
         postBtn=(Button)findViewById(R.id.btnAccept);
 
+        edtDate.setFocusable(false);
+        edtDate.setClickable(true);
+        edtTime.setFocusable(false);
+        edtTime.setClickable(true);
         //String[] data= {"Select","Registered General Nurse","Registered Mental Nurse","Sr Carer"};
 
-        final Calendar c = Calendar.getInstance();
+       /* final Calendar c = Calendar.getInstance();
 
         SimpleDateFormat formatDate = new SimpleDateFormat("dd MMM yyyy");
         SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm");
@@ -94,7 +101,7 @@ public class NewJobPostingActivity extends AppCompatActivity {
         String date=formatDate.format(c.getTime());
         String time=formatTime.format(c.getTime());
         SpannableTextViewer.displaySpannableText(date,edtDate);
-        SpannableTextViewer.displaySpannableText(time,edtTime);
+        SpannableTextViewer.displaySpannableText(time,edtTime);*/
 
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,role);
@@ -111,7 +118,15 @@ public class NewJobPostingActivity extends AppCompatActivity {
                 jobDuration = duration[i];
                 jobRole = role[i];
                 mHours.setText(jobDuration);
-                mRate.setText(jobRate);
+                System.out.println("Jrateee:"+jobRate);
+                if(jobRate.contains(".")){
+                    int indexOfDecimal = jobRate.indexOf(".");
+                    mRate1.setText(jobRate.substring(0, indexOfDecimal));
+                    mRate2.setText(jobRate.substring(indexOfDecimal+1));
+                } else {
+                    mRate1.setText(jobRate);
+                    mRate2.setText("0");
+                }
                 mDescription.setText(jobDescription);
             }
 
@@ -148,32 +163,45 @@ public class NewJobPostingActivity extends AppCompatActivity {
         postBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String hours = mHours.getText().toString();
-                String rate = mRate.getText().toString();
-                String desc = mDescription.getText().toString();
-                String noOfRoles = mNoOfRoles.getText().toString();
-                View focusView = null;
-                if(TextUtils.isEmpty(hours)){
-                    mHours.setError(getString(R.string.error_field_required));
-                    focusView = mHours;
-                    focusView.requestFocus();
-                } else if(TextUtils.isEmpty(rate)){
-                    mRate.setError(getString(R.string.error_field_required));
-                    focusView = mRate;
-                    focusView.requestFocus();
+                String date = edtDate.getText().toString().trim();
+                String time = edtTime.getText().toString().trim();
+                String hours = mHours.getText().toString().trim();
+                String rate1 = mRate1.getText().toString().trim();
+                String rate2 = mRate2.getText().toString().trim();
+                String desc = mDescription.getText().toString().trim();
+                String noOfRoles = mNoOfRoles.getText().toString().trim();
+                if(TextUtils.isEmpty(date)){
+                    //edtDate.setError(getString(R.string.error_field_required));
+                    TextView txt = (TextView)findViewById(R.id.datetxt);
+                    incorrectMsg("Please select Date",edtDate,txt);
+                }
+                else if(TextUtils.isEmpty(time)){
+                    //edtTime.setError(getString(R.string.error_field_required));
+                    TextView txt = (TextView)findViewById(R.id.timetxt);
+                    incorrectMsg("Please select Time",edtTime,txt);
+                }
+                else if(TextUtils.isEmpty(hours) || Integer.valueOf(hours)<0){
+                    //mHours.setError(getString(R.string.error_field_required));
+                    TextView txt = (TextView)findViewById(R.id.hourstxt);
+                    incorrectMsg("Please enter hours",mHours,txt);
+                } else if(TextUtils.isEmpty(rate1) || TextUtils.isEmpty(rate2) || Integer.valueOf(rate1)<0){
+                    //mRate1.setError(getString(R.string.error_field_required));
+                    TextView txt = (TextView)findViewById(R.id.ratetxt);
+                    incorrectMsg("Please enter rate",mRate1,txt);
                 } else if(TextUtils.isEmpty(desc)){
-                    mDescription.setError(getString(R.string.error_field_required));
-                    focusView = mDescription;
-                    focusView.requestFocus();
-                } else if(TextUtils.isEmpty(noOfRoles)){
-                    mNoOfRoles.setError(getString(R.string.error_field_required));
-                    focusView = mNoOfRoles;
-                    focusView.requestFocus();
+                    //mDescription.setError(getString(R.string.error_field_required));
+                    TextView txt = (TextView)findViewById(R.id.desctxt);
+                    incorrectMsg("Please enter description",mDescription,txt);
+                } else if(TextUtils.isEmpty(noOfRoles)|| Integer.valueOf(noOfRoles)<0){
+                    //mNoOfRoles.setError(getString(R.string.error_field_required));
+                    TextView txt = (TextView)findViewById(R.id.noofroletxt);
+                    incorrectMsg("Please enter No of Roles",mNoOfRoles,txt);
                 } else {
-                    NewJobPostRequest(hours,rate,desc,noOfRoles);
+                    NewJobPostRequest(hours,rate1+"."+rate2,desc,noOfRoles);
                 }
             }
         });
+
 
         lnrNumberOfDays.setVisibility(View.GONE);
     }
@@ -377,5 +405,23 @@ public class NewJobPostingActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    public void incorrectMsg(String msg,EditText edt,TextView txt) {
+        Toast.makeText(NewJobPostingActivity.this,msg,Toast.LENGTH_LONG).show();
+        Animation shake = AnimationUtils.loadAnimation(this,
+                R.anim.animation_shake);
+        edt.startAnimation(shake);
+        Animation shake1 = AnimationUtils.loadAnimation(this,
+                R.anim.animation_shake);
+        txt.startAnimation(shake1);
+
+    }
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        Intent in = new Intent(NewJobPostingActivity.this,DashboardActivity.class);
+        startActivity(in);
+        finish();
     }
 }

@@ -33,6 +33,7 @@ import com.sample.poc.R;
 import com.sample.poc.Utilities.Constants;
 import com.sample.poc.Utilities.PreferenceHelper;
 import com.sample.poc.Utilities.SpannableTextViewer;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,9 +50,10 @@ import static com.sample.poc.Utilities.Constants.FEEDBACK_LIST_COUNT;
 
 public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAdapter.MyViewHolder> {
 
-    private List<InterestListItem> interestListItems;
+    public List<InterestListItem> interestListItems;
+    public static InterestListItem interestItem;
     Context context;
-
+    public static String response="0";
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -97,39 +99,47 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
     @Override
     public void onBindViewHolder(final InterestedListAdapter.MyViewHolder holder, int position) {
         final InterestListItem interestListItem = interestListItems.get(position);
+        interestItem = interestListItems.get(position);
         holder.txtNameValue.setText(interestListItem.getName());
         holder.lnrContentMore.setVisibility(View.GONE);
         holder.rateValue.setText(interestListItem.getAcceptableRate());
         holder.regnoValue.setText(interestListItem.getRegNo());
         holder.experienceValue.setText(interestListItem.getExperience());
         holder.ratingBar.setRating(interestListItem.getRating());
-        holder.profile_user_img.setImageResource(interestListItem.getImageResource());
-        int cnt=interestListItem.getFeedbackListItems().size();
-        holder.feedback.setText(context.getResources().getString(R.string.feedback)+"("+cnt+")");
-
-        holder.lnrFeedbackList.removeAllViews();
-        int totalCnt=FEEDBACK_LIST_COUNT;
-        if(FEEDBACK_LIST_COUNT>interestListItem.getFeedbackListItems().size())
-            totalCnt=interestListItem.getFeedbackListItems().size();
-
-        for(int i=0;i<totalCnt;i++)
-        {
-            View itemView = LayoutInflater.from(context)
-                    .inflate(R.layout.feedback_row, holder.lnrFeedbackList, false);
-
-            TextView feedback_name=itemView.findViewById(R.id.feedback_name);
-            ImageView img_pic=itemView.findViewById(R.id.img_pic);
-            RatingBar ratingBar=(RatingBar)itemView.findViewById(R.id.ratingBar);
-            TextView feedback_value=itemView.findViewById(R.id.feedback_value);
-
-            feedback_name.setText(interestListItem.getFeedbackListItems().get(i).getUserName());
-            feedback_value.setText(interestListItem.getFeedbackListItems().get(i).getFeedbackData());
-            img_pic.setImageResource(interestListItem.getFeedbackListItems().get(i).getImageResource());
-            ratingBar.setRating(interestListItem.getFeedbackListItems().get(i).getRating());
-
-            holder.lnrFeedbackList.addView(itemView);
+        Picasso.get().load(Constants.BASE_URL+interestListItem.getImageURL()).into(holder.profile_user_img);
+        final int cnt = interestListItem.getFeedbackListItems().size();
+        holder.feedback.setText(context.getResources().getString(R.string.feedback) + "(" + cnt + ")");
+        if(interestListItem.getStatus().equals("Interested")){
+            holder.btnAccept.setVisibility(View.VISIBLE);
+        } else {
+            holder.btnAccept.setVisibility(View.GONE);
         }
 
+        holder.lnrFeedbackList.removeAllViews();
+        int totalCnt = FEEDBACK_LIST_COUNT;
+       if(FEEDBACK_LIST_COUNT>interestListItem.getFeedbackListItems().size()) {
+            totalCnt = interestListItem.getFeedbackListItems().size();
+        }
+
+        if (cnt <= 0) {
+            holder.morefeedback.setVisibility(View.INVISIBLE);
+        } else {
+            for (int i = 0; i < totalCnt; i++) {
+                View itemView = LayoutInflater.from(context)
+                        .inflate(R.layout.feedback_row, holder.lnrFeedbackList, false);
+
+                TextView feedback_name=itemView.findViewById(R.id.feedback_name);
+                ImageView img_pic = itemView.findViewById(R.id.img_pic);
+                RatingBar ratingBar = (RatingBar) itemView.findViewById(R.id.ratingBar);
+                TextView feedback_value = itemView.findViewById(R.id.feedback_value);
+
+                feedback_value.setText(interestListItem.getFeedbackListItems().get(i).getFeedbackData());
+                img_pic.setImageResource(interestListItem.getFeedbackListItems().get(i).getImageResource());
+                ratingBar.setRating(interestListItem.getFeedbackListItems().get(i).getRating());
+
+                holder.lnrFeedbackList.addView(itemView);
+            }
+    }
         SpannableTextViewer.displaySpannableText(context.getResources().getString(R.string.read_more),holder.readmore);
         SpannableTextViewer.displaySpannableText(context.getResources().getString(R.string.read_less),holder.readless);
         SpannableTextViewer.displaySpannableText(context.getResources().getString(R.string.more_feedback),holder.morefeedback);
@@ -164,9 +174,11 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
         holder.morefeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // holder.lnrContentMore.setVisibility(View.VISIBLE);
-                Intent intent=new Intent(context, FeedbackActivity.class);
-                context.startActivity(intent);
+               // holder.lnrContentMore.setVisibility(View.VISIBLE);>0
+                if(cnt > 0) {
+                    Intent intent = new Intent(context, FeedbackActivity.class);
+                    context.startActivity(intent);
+                }
             }
         });
 
@@ -196,10 +208,11 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
                     Request.Method.PUT, Constants.BASE_URL+Constants.ACCEPTED_URL+id, js,
                     new Response.Listener<JSONObject>() {
                         @Override
-                        public void onResponse(JSONObject response) {
-                            System.out.println("responseFrompostjobnewwwww:" + response.toString());
+                        public void onResponse(JSONObject res) {
+                            System.out.println("responseFrompostjobnewwwww:" + res.toString());
                             holder.btnAccept.setVisibility(View.GONE);
                             Toast.makeText(context,context.getResources().getString(R.string.successfully_accepted),Toast.LENGTH_SHORT).show();
+                            response = res.toString();
                         }
                     }, new Response.ErrorListener() {
                 @Override

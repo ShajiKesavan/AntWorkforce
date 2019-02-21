@@ -58,8 +58,7 @@ public class CompletedJobsFragment extends Fragment {
         listCompletedJobs.setLayoutManager(mLayoutManager);
         listCompletedJobs.setItemAnimator(new DefaultItemAnimator());
         listCompletedJobs.setAdapter(completedJobsAdapter);
-        getCompletedJobs(DashboardActivity.shiftsJs);
-        //preparePostedJobData();
+        preparePostedJobData();
         return parentView;
     }
 
@@ -84,35 +83,6 @@ public class CompletedJobsFragment extends Fragment {
         completedJobItems.add(completedJobItem);
 
         completedJobsAdapter.notifyDataSetChanged();
-    }
-
-    public void getCompletedJobs(final String postResponse){
-
-        try {
-            System.out.println("responseFromcmpltd2 :" + postResponse.toString());
-            CompletedJobItem completedJobItem;
-            JSONArray jArray = new JSONArray(postResponse);
-            JSONObject jObject = null;
-            for (int i = 0; i < jArray.length(); i++) {
-                jObject = jArray.getJSONObject(i);
-                String id = jObject.getString("id");
-                String roleName = jObject.getString("roleName");
-                String rate = jObject.getString("rate");
-                String duration = jObject.getString("duration");
-                String date = jObject.getString("startDateTime");
-                String resource = jObject.getString("resource");
-                JSONObject jObj = new JSONObject(resource);
-                String name = jObj.getString("name");
-                String shiftStatus = jObject.getString("shiftStatus");
-                completedJobItem = new CompletedJobItem(date,id, roleName,"£"+rate+"/Hour",
-                        duration+" Hours",name,shiftStatus);
-                completedJobItems.add(completedJobItem);
-            }
-            completedJobsAdapter.notifyDataSetChanged();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
 }
