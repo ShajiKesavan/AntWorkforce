@@ -42,6 +42,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.dmoral.toasty.Toasty;
+
 import static com.sample.poc.Utilities.Constants.FEEDBACK_LIST_COUNT;
 
 /**
@@ -57,11 +59,11 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtNameValue, rateValue, regnoValue,experienceValue,readmore,readless,morefeedback,feedback;
+        public TextView txtNameValue, rateValue, regnoValue,experienceValue,readmore,readless,morefeedback,feedback,miniCv;
         public ImageView profile_user_img;
         public RatingBar ratingBar;
         public Button btnAccept;
-        public LinearLayout lnrContentMore,lnrFeedbackList;
+        public LinearLayout lnrContentMore,lnrFeedbackList,lnrMiviCv;
 
         public MyViewHolder(View view) {
             super(view);
@@ -69,12 +71,14 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
             rateValue = (TextView) view.findViewById(R.id.rateValue);
             regnoValue = (TextView) view.findViewById(R.id.regnoValue);
             experienceValue = (TextView) view.findViewById(R.id.experienceValue);
+            miniCv = (TextView) view.findViewById(R.id.minicvValue);
             readmore = (TextView) view.findViewById(R.id.readmore);
             profile_user_img = (ImageView) view.findViewById(R.id.profile_user_img);
             ratingBar = (RatingBar) view.findViewById(R.id.ratingBar);
             btnAccept = (Button) view.findViewById(R.id.btnAccept);
             lnrContentMore = view.findViewById(R.id.lnrContentMore);
             lnrFeedbackList = view.findViewById(R.id.lnrFeedbackList);
+            lnrMiviCv = view.findViewById(R.id.minicv);
             readless = view.findViewById(R.id.readless);
             morefeedback = view.findViewById(R.id.morefeedback);
             feedback = view.findViewById(R.id.feedback);
@@ -97,7 +101,7 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
     }
 
     @Override
-    public void onBindViewHolder(final InterestedListAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(final InterestedListAdapter.MyViewHolder holder, final int position) {
         final InterestListItem interestListItem = interestListItems.get(position);
         interestItem = interestListItems.get(position);
         holder.txtNameValue.setText(interestListItem.getName());
@@ -106,6 +110,7 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
         holder.regnoValue.setText(interestListItem.getRegNo());
         holder.experienceValue.setText(interestListItem.getExperience());
         holder.ratingBar.setRating(interestListItem.getRating());
+        holder.miniCv.setText(interestListItem.getMiniCv());
         Picasso.get().load(Constants.BASE_URL+interestListItem.getImageURL()).into(holder.profile_user_img);
         final int cnt = interestListItem.getFeedbackListItems().size();
         holder.feedback.setText(context.getResources().getString(R.string.feedback) + "(" + cnt + ")");
@@ -128,13 +133,13 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
                 View itemView = LayoutInflater.from(context)
                         .inflate(R.layout.feedback_row, holder.lnrFeedbackList, false);
 
-                TextView feedback_name=itemView.findViewById(R.id.feedback_name);
-                ImageView img_pic = itemView.findViewById(R.id.img_pic);
+                //TextView feedback_name=itemView.findViewById(R.id.feedback_name);
+                //ImageView img_pic = itemView.findViewById(R.id.img_pic);
                 RatingBar ratingBar = (RatingBar) itemView.findViewById(R.id.ratingBar);
                 TextView feedback_value = itemView.findViewById(R.id.feedback_value);
 
                 feedback_value.setText(interestListItem.getFeedbackListItems().get(i).getFeedbackData());
-                img_pic.setImageResource(interestListItem.getFeedbackListItems().get(i).getImageResource());
+                //img_pic.setImageResource(interestListItem.getFeedbackListItems().get(i).getImageResource());
                 ratingBar.setRating(interestListItem.getFeedbackListItems().get(i).getRating());
 
                 holder.lnrFeedbackList.addView(itemView);
@@ -148,7 +153,7 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
             @Override
             public void onClick(View view) {
 
-                AcceptRequest(interestListItem.getRegNo(),holder);
+                AcceptRequest(interestListItem.getRegNo(),holder,position);
 
             }
         });
@@ -156,6 +161,8 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
         holder.readmore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!interestListItem.getMiniCv().equals("null"))
+                    holder.lnrMiviCv.setVisibility(View.VISIBLE);
                 holder.lnrContentMore.setVisibility(View.VISIBLE);
                 holder.readmore.setVisibility(View.GONE);
             }
@@ -165,6 +172,7 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
         holder.readless.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                holder.lnrMiviCv.setVisibility(View.GONE);
                 holder.lnrContentMore.setVisibility(View.GONE);
                 holder.readmore.setVisibility(View.VISIBLE);
             }
@@ -191,7 +199,7 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
         return interestListItems.size();
     }
 
-    public void AcceptRequest(String id, final InterestedListAdapter.MyViewHolder holder){
+    public void AcceptRequest(String id, final InterestedListAdapter.MyViewHolder holder,final int pos){
 
         try {
             JSONObject js = new JSONObject();
@@ -211,28 +219,30 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
                         public void onResponse(JSONObject res) {
                             System.out.println("responseFrompostjobnewwwww:" + res.toString());
                             holder.btnAccept.setVisibility(View.GONE);
-                            Toast.makeText(context,context.getResources().getString(R.string.successfully_accepted),Toast.LENGTH_SHORT).show();
+                            Toasty.success(context,context.getResources().getString(R.string.successfully_accepted),Toast.LENGTH_SHORT,true).show();
                             response = res.toString();
+                            removeAt(pos);
                         }
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     if(error instanceof TimeoutError || error instanceof NoConnectionError){
-                        Toast.makeText(AntApplication._appContext,
+                        Toasty.error(AntApplication._appContext,
                                 "Network Timeout Error or no internet, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG,true).show();
 
                     }else if(error.toString().contains("AuthFailureError")) {
-                        Toast.makeText(AntApplication._appContext,
+                        Toasty.error(AntApplication._appContext,
                                 "Token Expired, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG,true).show();
+                        PreferenceHelper.setUserLogin_PREF(AntApplication._appContext,false);
                         Intent in = new Intent(context, LoginActivity.class);
                         context.startActivity(in);
                     }
                     else {
-                        Toast.makeText(AntApplication._appContext,
+                        Toasty.error(AntApplication._appContext,
                                 "Server Error, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG,true).show();
                     }
 
                     System.out.println("responseFromLogin err"
@@ -268,11 +278,16 @@ public class InterestedListAdapter extends RecyclerView.Adapter<InterestedListAd
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(AntApplication._appContext,
+            Toasty.error(AntApplication._appContext,
                     "Error, Please try again.",
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG,true).show();
 
         }
 
+    }
+    public void removeAt(int position) {
+        interestListItems.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, interestListItems.size());
     }
 }

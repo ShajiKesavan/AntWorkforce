@@ -9,11 +9,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
     <LinearLayout
+        android:id="@+id/empty_completed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/title_completed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
@@ -31,29 +33,14 @@
             android:visibility="visible"
             android:dividerHeight="8dp"
             android:id="@+id/listCompletedJobs"/>
-        <LinearLayout
-            android:id="@+id/empty_completed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:gravity="center"
-            android:background="@color/cardview_light_background"
-            android:text="@string/no_completed_shifts"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/grey"/>
-        </LinearLayout>
+
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/title_posted"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"

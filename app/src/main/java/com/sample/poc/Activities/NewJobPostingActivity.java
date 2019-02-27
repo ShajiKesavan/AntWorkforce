@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -43,10 +44,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import es.dmoral.toasty.Toasty;
 
 public class NewJobPostingActivity extends AppCompatActivity {
 
@@ -59,6 +65,7 @@ public class NewJobPostingActivity extends AppCompatActivity {
     String jobId,jobDescription,jobRate,jobDuration,jobRole;
     EditText mHours,mRate1,mRate2,mDescription,mNoOfRoles;
     Button postBtn;
+    String response = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,10 +182,19 @@ public class NewJobPostingActivity extends AppCompatActivity {
                     TextView txt = (TextView)findViewById(R.id.datetxt);
                     incorrectMsg("Please select Date",edtDate,txt);
                 }
+                else if(compareDate(date)){
+                    TextView txt = (TextView)findViewById(R.id.datetxt);
+                    incorrectMsg("Please select valid Date",edtDate,txt);
+                }
                 else if(TextUtils.isEmpty(time)){
                     //edtTime.setError(getString(R.string.error_field_required));
                     TextView txt = (TextView)findViewById(R.id.timetxt);
                     incorrectMsg("Please select Time",edtTime,txt);
+                }
+                else if(compareTime(time)){
+                    //edtTime.setError(getString(R.string.error_field_required));
+                    TextView txt = (TextView)findViewById(R.id.timetxt);
+                    incorrectMsg("Please select valid Time",edtTime,txt);
                 }
                 else if(TextUtils.isEmpty(hours) || Integer.valueOf(hours)<0){
                     //mHours.setError(getString(R.string.error_field_required));
@@ -239,9 +255,11 @@ public class NewJobPostingActivity extends AppCompatActivity {
     void showTimePicker()
     {
         // Get Current Time
-        final Calendar c = Calendar.getInstance();
-        int mHour = c.get(Calendar.HOUR_OF_DAY);
-        int mMinute = c.get(Calendar.MINUTE);
+        //final Calendar c = Calendar.getInstance();
+        //int mHour = c.get(Calendar.HOUR_OF_DAY);
+        //int mMinute = c.get(Calendar.MINUTE);
+        int mHour = 8;
+        int mMinute = 0;
 
         // Launch Time Picker Dialog
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
@@ -255,6 +273,7 @@ public class NewJobPostingActivity extends AppCompatActivity {
                             time=hourOfDay + ":0" + minute;
                         else
                             time=hourOfDay + ":" + minute;
+
                         SpannableTextViewer.displaySpannableText(time,edtTime);
                     }
                 }, mHour, mMinute, false);
@@ -336,34 +355,33 @@ public class NewJobPostingActivity extends AppCompatActivity {
                     Request.Method.POST, Constants.BASE_URL+Constants.NEW_JOB_URL, js,
                     new Response.Listener<JSONObject>() {
                         @Override
-                        public void onResponse(JSONObject response) {
-                            System.out.println("responseFrompostjobnewwwww:" + response.toString());
-                            Toast.makeText(getApplicationContext(),"Successfully Posted new job!",Toast.LENGTH_LONG).show();
-                            Intent in = new Intent(NewJobPostingActivity.this,DashboardActivity.class);
-                            in.putExtra("dashbdJs",response.toString());
-                            startActivity(in);
-                            finish();
+                        public void onResponse(JSONObject res) {
+                            response = res.toString();
+                            System.out.println("responseFrompostjobnewwwww:" + res.toString());
+                            try {
+                                Toasty.success(NewJobPostingActivity.this, "Successfully Posted new job!",
+                                        Toast.LENGTH_SHORT, true).show();
+                                refreshAll();
+                            }catch(Exception e){
+                                e.printStackTrace();
+                                System.out.println("error toast");
+                            }
                         }
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     if(error instanceof TimeoutError || error instanceof NoConnectionError){
-                        Toast.makeText(AntApplication._appContext,
-                                "Network Timeout Error or no internet, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                        showToastMsg("Network Timeout Error or no internet, Please try again.",0);
 
                     }else if(error.toString().contains("AuthFailureError")) {
-                        Toast.makeText(AntApplication._appContext,
-                                "Token Expired, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                        showToastMsg("Token Expired, Please try again.",0);
+                        PreferenceHelper.setUserLogin_PREF(AntApplication._appContext,false);
                         Intent in = new Intent(NewJobPostingActivity.this, LoginActivity.class);
                         startActivity(in);
                         finish();
                     }
                     else {
-                        Toast.makeText(AntApplication._appContext,
-                                "Server Error, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                        showToastMsg("Server Error, Please try again.",0);
                     }
 
                     System.out.println("responseFromLogin err"
@@ -399,16 +417,15 @@ public class NewJobPostingActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(AntApplication._appContext,
-                    "Error, Please try again.",
-                    Toast.LENGTH_LONG).show();
+            showToastMsg("Error, Please try again.",0);
 
         }
 
     }
 
     public void incorrectMsg(String msg,EditText edt,TextView txt) {
-        Toast.makeText(NewJobPostingActivity.this,msg,Toast.LENGTH_LONG).show();
+        //Toast.makeText(NewJobPostingActivity.this,msg,Toast.LENGTH_LONG).show();
+        showToastMsg(msg,0);
         Animation shake = AnimationUtils.loadAnimation(this,
                 R.anim.animation_shake);
         edt.startAnimation(shake);
@@ -417,10 +434,125 @@ public class NewJobPostingActivity extends AppCompatActivity {
         txt.startAnimation(shake1);
 
     }
+    //return true if lower
+    public boolean compareTime(String time){
+        Calendar now = Calendar.getInstance();
+        int hour = now.get(Calendar.HOUR_OF_DAY);
+        int minute = now.get(Calendar.MINUTE);
+
+        int timeHour = Integer.valueOf(time.substring(0,time.indexOf(":")));
+        int timeMinute = Integer.valueOf(time.substring(time.indexOf(":")+1));
+        System.out.println("comparetime:: hour:"+hour+";;"+minute+";;"+timeHour+";;"+timeMinute);
+        if(isSameDate(edtDate.getText().toString())) {
+            if (hour > timeHour) {
+                System.out.println("comparetime1:: hour:" + time);
+                return true;
+            } else if (hour == timeHour) {
+                if (minute > timeMinute)
+                    System.out.println("comparetime2:: hour:" + time);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isSameDate(String date){
+        final Calendar c = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy");
+        String currentDate = format.format(c.getTime());
+        if(!date.equals(currentDate))
+            return false;
+        return true;
+    }
+    //return true if lower
+    public boolean compareDate(String date){
+        Calendar c = Calendar.getInstance();
+
+// set the calendar to start of today
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+
+// and get that as a Date
+        Date today = c.getTime();
+
+// or as a timestamp in milliseconds
+        long todayInMillis = c.getTimeInMillis();
+
+// user-specified date which you are testing
+// let's say the components come from a form or something
+        SimpleDateFormat spf=new SimpleDateFormat("dd MMM yyyy");
+        Date newDate= null;
+        try {
+            newDate = spf.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        spf= new SimpleDateFormat("dd MM yyyy");
+        date = spf.format(newDate);
+        System.out.println("dateeee"+date);
+
+        int year = Integer.valueOf(date.substring(6));
+        int month = Integer.valueOf(date.substring(3,5))-1;
+        int dayOfMonth = Integer.valueOf(date.substring(0,2));
+        System.out.println("dateeee"+date+";;"+year+";;"+month+";;"+dayOfMonth);
+// reuse the calendar to set user specified date
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+// and get that as a Date
+        Date dateSpecified = c.getTime();
+
+// test your condition
+        if (dateSpecified.before(today)) {
+            System.err.println("Date specified [" + dateSpecified + "] is before today [" + today + "]");
+            return true;
+        } else {
+            System.err.println("Date specified [" + dateSpecified + "] is NOT before today [" + today + "]");
+        }
+        return false;
+    }
+
+    public void showToastMsg(String msg,int status){
+        if(status == 0)
+            Toasty.error(NewJobPostingActivity.this, msg,
+                    Toast.LENGTH_LONG, true).show();
+        else
+            Toasty.success(NewJobPostingActivity.this, msg,
+                    Toast.LENGTH_LONG, true).show();
+    }
+
+    public void refreshAll(){
+        edtTime.setText("");
+        edtDate.setText("");
+        int i = 0;
+        spinnerRole.setSelection(i);
+        jobId = id[i];
+        jobDescription = data[i];
+        jobRate = rate[i];
+        jobDuration = duration[i];
+        jobRole = role[i];
+        mHours.setText(jobDuration);
+        System.out.println("Jrateee:"+jobRate);
+        if(jobRate.contains(".")){
+            int indexOfDecimal = jobRate.indexOf(".");
+            mRate1.setText(jobRate.substring(0, indexOfDecimal));
+            mRate2.setText(jobRate.substring(indexOfDecimal+1));
+        } else {
+            mRate1.setText(jobRate);
+            mRate2.setText("0");
+        }
+        mDescription.setText(jobDescription);
+    }
+
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
         Intent in = new Intent(NewJobPostingActivity.this,DashboardActivity.class);
+        if(response!=null)
+        in.putExtra("dashbdJs",response);
         startActivity(in);
         finish();
     }

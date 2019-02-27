@@ -14,6 +14,7 @@
     <string name="acceptable_rate">Acceptable Rate:</string>
     <string name="regno">RegNo:</string>
     <string name="experience">Experience:</string>
+    <string name="minicv">Mini cv:</string>
 
     <string name="date_time">Date Time:</string>
     <string name="role">Role:</string>
@@ -28,7 +29,7 @@
     <string name="duration">Duration:</string>
     <string name="address">Address:</string>
     <string name="vacancies">Vacancies:</string>
-    <string name="posts">#Posts</string>
+    <string name="posts">Posts</string>
     <string name="prefered_rate">My Preferred Rate:</string>
     <string name="timesheet_status">Timesheet Status:</string>
     <string name="start_date">Start Date</string>
@@ -39,9 +40,9 @@
     <string name="repeat">Repeat</string>
     <string name="number_of_days">Number of Days</string>
 
-    <string name="accepted">#Accepted</string>
-    <string name="confirmed">#Confirmed</string>
-    <string name="interest_received">#Interest received</string>
+    <string name="accepted">Accepted</string>
+    <string name="confirmed">Confirmed</string>
+    <string name="interest_received">Interests</string>
     <string name="interested"> Interested </string>
     <string name="read_more">Read More</string>
     <string name="read_less">Read Less</string>
@@ -57,8 +58,7 @@
     <string name="post">Post Job</string>
     <string name="confirm">Confirm</string>
     <string name="submit_timesheet">Submit</string>
-    <string name="approve_timesheet">Approve Timesheet</string>
-    <string name="reject_timesheet">Reject Timesheet</string>
+    <string name="reject">Reject</string>
     <string name="approve">Approve</string>
     <string name="successfully_accepted">Successfully Accepted</string>
 
@@ -70,8 +70,10 @@
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field">This field is required</string>
     <string name="error_incorrect_login">Invalid login! Please try again</string>
-    <string name="error_field_required">This field is required</string>
+    <string name="error_email_required">Email field is required</string>
+    <string name="error_pwd_required">Password field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>

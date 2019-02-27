@@ -38,6 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.dmoral.toasty.Toasty;
+
 /**
  * Created by 1013373 on 8/3/2018.
  */
@@ -48,8 +50,8 @@ public class AcceptedJobsAdapter extends RecyclerView.Adapter<AcceptedJobsAdapte
     Context context;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtDateTimeValue, roleValue, rateValue,durationValue,employerValue,more,less,status;
-        public LinearLayout readMore,card,moreLn;
+        public TextView txtDateTimeValue, roleValue, rateValue, durationValue, employerValue, status;
+        public LinearLayout card;
         public Button btnConfirm;
 
         public MyViewHolder(View view) {
@@ -59,20 +61,16 @@ public class AcceptedJobsAdapter extends RecyclerView.Adapter<AcceptedJobsAdapte
             rateValue = (TextView) view.findViewById(R.id.rateValue);
             durationValue = (TextView) view.findViewById(R.id.durationValue);
             employerValue = (TextView) view.findViewById(R.id.employerValue);
-            more = (TextView) view.findViewById(R.id.more);
-            less = (TextView) view.findViewById(R.id.less);
             status = (TextView) view.findViewById(R.id.statustxt);
-            readMore = (LinearLayout) view.findViewById(R.id.ln_more);
-            moreLn = (LinearLayout) view.findViewById(R.id.more_ln);
             card = (LinearLayout) view.findViewById(R.id.ln_card);
             btnConfirm = (Button) view.findViewById(R.id.btnConfirm);
         }
     }
 
 
-    public AcceptedJobsAdapter(List<AcceptedJobsItem> acceptedJobsItems,Context context) {
+    public AcceptedJobsAdapter(List<AcceptedJobsItem> acceptedJobsItems, Context context) {
         this.acceptedJobsItems = acceptedJobsItems;
-        this.context=context;
+        this.context = context;
     }
 
     @Override
@@ -85,55 +83,25 @@ public class AcceptedJobsAdapter extends RecyclerView.Adapter<AcceptedJobsAdapte
 
     @Override
     public void onBindViewHolder(final AcceptedJobsAdapter.MyViewHolder holder, int position) {
-        final AcceptedJobsItem acceptedJobsItem= acceptedJobsItems.get(position);
+        final AcceptedJobsItem acceptedJobsItem = acceptedJobsItems.get(position);
         holder.txtDateTimeValue.setText(acceptedJobsItem.getStartDate());
         holder.roleValue.setText(acceptedJobsItem.getRole());
         holder.rateValue.setText(acceptedJobsItem.getRate());
         holder.durationValue.setText(acceptedJobsItem.getDuration());
         holder.employerValue.setText(acceptedJobsItem.getEmployer());
-        holder.status.setText(acceptedJobsItem.getDescription());
-        if(acceptedJobsItem.getDescription().equals("ACCEPTED") || acceptedJobsItem.getDescription().equals("Accepted")) {
+        if (acceptedJobsItem.getDescription().equals("ACCEPTED") || acceptedJobsItem.getDescription().equals("Accepted")) {
             holder.card.setBackgroundColor(context.getResources().getColor(R.color.accepted));
             holder.btnConfirm.setVisibility(View.VISIBLE);
-        }
-        else if(acceptedJobsItem.getDescription().equals("CONFIRMED") || acceptedJobsItem.getDescription().equals("Confirmed")) {
+            holder.status.setText("Accepted");
+        } else if (acceptedJobsItem.getDescription().equals("CONFIRMED") || acceptedJobsItem.getDescription().equals("Confirmed")) {
             holder.card.setBackgroundColor(context.getResources().getColor(R.color.confirmed));
             holder.btnConfirm.setVisibility(View.GONE);
-        }
-        else {
+            holder.status.setText("Confirmed");
+        } else {
             holder.card.setBackgroundColor(context.getResources().getColor(R.color.interested));
             holder.btnConfirm.setVisibility(View.GONE);
+            holder.status.setText("Interested");
         }
-
-        String udata=context.getResources().getString(R.string.read_more);
-        final SpannableString content = new SpannableString(udata);
-        content.setSpan(new UnderlineSpan(), 0, udata.length(), 0);
-        holder.more.setText(content);
-
-        holder.more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-        holder.readMore.setVisibility(View.VISIBLE);
-        holder.moreLn.setVisibility(View.GONE);
-
-            }
-        });
-
-        String udata1=context.getResources().getString(R.string.read_less);
-        final SpannableString content1 = new SpannableString(udata1);
-        content1.setSpan(new UnderlineSpan(), 0, udata1.length(), 0);
-        holder.less.setText(content1);
-
-        holder.less.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                holder.readMore.setVisibility(View.GONE);
-                holder.moreLn.setVisibility(View.VISIBLE);
-
-            }
-        });
 
         holder.btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,7 +117,7 @@ public class AcceptedJobsAdapter extends RecyclerView.Adapter<AcceptedJobsAdapte
         return acceptedJobsItems.size();
     }
 
-    public void ConfirmedRequest(String id){
+    public void ConfirmedRequest(String id) {
 
         try {
             // Simulate network access.
@@ -158,14 +126,14 @@ public class AcceptedJobsAdapter extends RecyclerView.Adapter<AcceptedJobsAdapte
             try {
                 js.put("loggedInUserId", Integer.valueOf(PreferenceHelper.getUserId_PREF(AntApplication._appContext)));
                 js.put("status", "CONFIRMED");
-                System.out.println("json obj feedbk: "+js.toString());
+                System.out.println("json obj feedbk: " + js.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             // Make request for JSONObject
             final JsonObjectRequest jsonObjReq = new JsonObjectRequest(
-                    Request.Method.PUT, Constants.BASE_URL+Constants.FEEDBACK_URL+id, js,
+                    Request.Method.PUT, Constants.BASE_URL + Constants.FEEDBACK_URL + id, js,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -173,6 +141,8 @@ public class AcceptedJobsAdapter extends RecyclerView.Adapter<AcceptedJobsAdapte
                             /*Intent in = new Intent(context, DashboardActivity.class);
                             in.putExtra("dashbdJs",response.toString());
                             context.startActivity(in);*/
+                            Toasty.success(context, "Successfully confirmed",
+                                    Toast.LENGTH_LONG, true).show();
                             try {
                                 JSONObject jObject = null;
                                 try {
@@ -188,29 +158,29 @@ public class AcceptedJobsAdapter extends RecyclerView.Adapter<AcceptedJobsAdapte
                                 }
                                 MyShiftsFragment.mRefreshNow = true;
                                 MyShiftsFragment.refreshAll();
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    if(error instanceof TimeoutError || error instanceof NoConnectionError){
-                        Toast.makeText(AntApplication._appContext,
+                    if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                        Toasty.error(AntApplication._appContext,
                                 "Network Timeout Error or no internet, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG,true).show();
 
-                    }else if(error.toString().contains("AuthFailureError")) {
-                        Toast.makeText(AntApplication._appContext,
+                    } else if (error.toString().contains("AuthFailureError")) {
+                        Toasty.error(AntApplication._appContext,
                                 "Token Expired, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG,true).show();
+                        PreferenceHelper.setUserLogin_PREF(AntApplication._appContext, false);
                         Intent in = new Intent(context, LoginActivity.class);
                         context.startActivity(in);
-                    }
-                    else {
-                        Toast.makeText(AntApplication._appContext,
+                    } else {
+                        Toasty.error(AntApplication._appContext,
                                 "Server Error, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG,true).show();
                     }
                     System.out.println("responseFromLogin err"
                             + error);
@@ -245,11 +215,9 @@ public class AcceptedJobsAdapter extends RecyclerView.Adapter<AcceptedJobsAdapte
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(AntApplication._appContext,
-                    "Error, Please try again.",
-                    Toast.LENGTH_LONG).show();
+            Toasty.error(AntApplication._appContext, "Error, Please try again.",
+                    Toast.LENGTH_SHORT, true).show();
         }
 
     }
 }
-

@@ -27,15 +27,34 @@
             android:layout_height="match_parent"
             android:textAllCaps="false"
             android:textSize="16sp"
+            android:visibility="gone"
             android:textStyle="bold"/>
         <TextView
             android:id="@+id/txtDateTimeValue"
             android:text="28/07/2018 08:00"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="6dp"
             android:textSize="16sp"
             android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/durationValue"
+            android:text="8 hours"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="6dp"/>
+        <TextView
+            android:id="@+id/rateValue"
+            android:text="$20.50/hour"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="6dp"/>
+
     </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,45 +67,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAllCaps="false"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
-            <TextView
-                android:id="@+id/rate"
-                android:text="@string/rate"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAllCaps="false"/>
-            <TextView
-                android:id="@+id/rateValue"
-                android:text="$20.50/hour"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAllCaps="false"
-                android:layout_marginLeft="6dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginLeft="25dp">
-                <TextView
-                    android:id="@+id/duration"
-                    android:text="@string/duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textAllCaps="false"/>
-                <TextView
-                    android:id="@+id/durationValue"
-                    android:text="8 hours"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textAllCaps="false"
-                    android:layout_marginLeft="6dp"/>
-            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

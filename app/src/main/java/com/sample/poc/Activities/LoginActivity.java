@@ -22,11 +22,14 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +54,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import es.dmoral.toasty.Toasty;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -165,31 +170,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
         // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password)) {
-            System.out.println("password:"+password);
-            mPasswordView.setError(getString(R.string.error_incorrect_password));
-            focusView = mPasswordView;
-            cancel = true;
+            incorrectMsg(getString(R.string.error_email_required),mPasswordView,0);
         }
         // Check for a valid email address.
         else if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
+            incorrectMsg(getString(R.string.error_pwd_required),mEmailView,0);
         } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
+            incorrectMsg(getString(R.string.error_invalid_email),mEmailView,0);
         }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        }// Check if Internet present
+        // Check if Internet present
         else if (!cd.isConnectingToInternet()) {
             // Internet Connection is not present
             openAlertMaterialNetwork();
@@ -337,9 +328,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                    Toast.makeText(AntApplication._appContext,
-                                            "Login Error, Please try again.",
-                                            Toast.LENGTH_LONG).show();
+                                    showToastMsg("Login Error, Please try again.",0);
                                     showProgress(false);
                                 }
                             }
@@ -347,14 +336,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         if(error instanceof TimeoutError || error instanceof NoConnectionError){
-                            Toast.makeText(AntApplication._appContext,
-                                    "Network Timeout Error or no internet, Please try again.",
-                                    Toast.LENGTH_LONG).show();
+                            showToastMsg("Network Timeout Error or no internet, Please try again.",0);
                             showProgress(false);
                         } else {
-                            Toast.makeText(AntApplication._appContext,
-                                    "Incorrect username or password, Please try again.",
-                                    Toast.LENGTH_LONG).show();
+                            incorrectLoginMsg("Incorrect username or password, Please try again.",0);
                             showProgress(false);
                         }
 
@@ -389,9 +374,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(AntApplication._appContext,
-                        "Error, Please try again.",
-                        Toast.LENGTH_LONG).show();
+                showToastMsg("Error, Please try again.",0);
                 showProgress(false);
             }
 
@@ -429,9 +412,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 showProgress(false);
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                Toast.makeText(AntApplication._appContext,
-                                        "Error, Please try again.",
-                                        Toast.LENGTH_LONG).show();
+                                showToastMsg("Error, Please try again.",0);
                                 showProgress(false);
                             }
                         }
@@ -439,15 +420,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     if(error instanceof TimeoutError || error instanceof NoConnectionError){
-                        Toast.makeText(AntApplication._appContext,
-                                "Network Timeout Error or No internet, Please try again.",
-                                Toast.LENGTH_LONG).show();
-
+                        showToastMsg("Network Timeout Error or No internet, Please try again.",0);
                     } else {
-                        Toast.makeText(AntApplication._appContext,
-                                "Error, Please try again.",
-                                Toast.LENGTH_LONG).show();
-
+                        showToastMsg("Error, Please try again.",0);
                     }
                     System.out.println("responseFromLogin2 err"
                             + error);
@@ -477,9 +452,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } catch (Exception e) {
             e.printStackTrace();
             showProgress(false);
-            Toast.makeText(AntApplication._appContext,
-                    "Error, Please try again.",
-                    Toast.LENGTH_LONG).show();
+            showToastMsg("Error, Please try again.",0);
         }
     }
     /** AlertDialog for network check login */
@@ -503,6 +476,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    public void showToastMsg(String msg,int status){
+            if(status == 0)
+                Toasty.error(LoginActivity.this, msg,
+                        Toast.LENGTH_LONG, true).show();
+            else
+                Toasty.success(LoginActivity.this, msg,
+                        Toast.LENGTH_LONG, true).show();
+    }
+
+    public void incorrectMsg(String msg,EditText edt,int status) {
+        //Toast.makeText(NewJobPostingActivity.this,msg,Toast.LENGTH_LONG).show();
+        showToastMsg(msg,status);
+        Animation shake = AnimationUtils.loadAnimation(this,
+                R.anim.animation_shake);
+        edt.startAnimation(shake);
+    }
+    public void incorrectLoginMsg(String msg,int status) {
+        LinearLayout ln = (LinearLayout)findViewById(R.id.email_login_form);
+        showToastMsg(msg,status);
+        Animation shake = AnimationUtils.loadAnimation(this,
+                R.anim.animation_shake);
+        ln.startAnimation(shake);
     }
 }
 

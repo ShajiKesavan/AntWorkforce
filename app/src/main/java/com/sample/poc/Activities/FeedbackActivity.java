@@ -25,12 +25,15 @@ public class FeedbackActivity extends AppCompatActivity {
     RecyclerView listFeedback;
     FeedbackListAdapter feedbackListAdapter;
     ArrayList<FeedbackListItem> feedbackListItems= new ArrayList<>();
+    int totalCnt =0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
+        totalCnt=InterestedListAdapter.interestItem.getFeedbackListItems().size();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Feedback("+totalCnt+")");
         feedbackListItems= new ArrayList<>();
         listFeedback=(RecyclerView)findViewById(R.id.listFeedback);
 
@@ -64,8 +67,6 @@ public class FeedbackActivity extends AppCompatActivity {
 
     void prepareFeedbackData()
     {
-
-        int totalCnt=InterestedListAdapter.interestItem.getFeedbackListItems().size();
         for(int i=0;i<totalCnt;i++)
         {
             FeedbackListItem feedbackListItem=new FeedbackListItem("","",

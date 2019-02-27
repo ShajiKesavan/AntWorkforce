@@ -20,8 +20,11 @@
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
                 app:tabIndicatorColor="@color/cardview_light_background"
                 app:tabMode="scrollable"
+                app:tabSelectedTextColor="@android:color/white"
+                app:tabTextColor="@color/bg_color"
                 app:tabGravity="center"/>
         </android.support.design.widget.AppBarLayout>
 

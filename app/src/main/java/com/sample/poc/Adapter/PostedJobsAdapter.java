@@ -77,6 +77,7 @@ public class PostedJobsAdapter extends RecyclerView.Adapter<PostedJobsAdapter.My
                     intent.putExtra("id", postedJobItem.getStartTime());
                     intent.putExtra("role", postedJobItem.getRole());
                     intent.putExtra("title", udata);
+                    intent.putExtra("duration", postedJobItem.getDuration());
                     intent.putExtra("rate", postedJobItem.getRate());
                     intent.putExtra("date", postedJobItem.getStartDate());
                     context.startActivity(intent);
@@ -98,6 +99,7 @@ public class PostedJobsAdapter extends RecyclerView.Adapter<PostedJobsAdapter.My
                     intent.putExtra("id", postedJobItem.getStartTime());
                     intent.putExtra("role", postedJobItem.getRole());
                     intent.putExtra("title", udata1);
+                    intent.putExtra("duration", postedJobItem.getDuration());
                     intent.putExtra("rate", postedJobItem.getRate());
                     intent.putExtra("date", postedJobItem.getStartDate());
                     context.startActivity(intent);
@@ -120,6 +122,7 @@ public class PostedJobsAdapter extends RecyclerView.Adapter<PostedJobsAdapter.My
                     intent.putExtra("role", postedJobItem.getRole());
                     intent.putExtra("title", udata2);
                     intent.putExtra("rate", postedJobItem.getRate());
+                    intent.putExtra("duration", postedJobItem.getDuration());
                     intent.putExtra("date", postedJobItem.getStartDate());
                     context.startActivity(intent);
                 }

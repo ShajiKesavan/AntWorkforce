@@ -13,6 +13,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,12 +41,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import es.dmoral.toasty.Toasty;
+
 public class InterestReceviedListActivity extends Activity {
 
     RecyclerView listInterestReceived;
     InterestedListAdapter interestedListAdapter;
     ArrayList<InterestListItem> interestListItems= new ArrayList<>();
-    TextView title,role,rate,date;
+    TextView title,role,rate,date,duration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +59,13 @@ public class InterestReceviedListActivity extends Activity {
         role = (TextView)findViewById(R.id.roleValue);
         rate = (TextView)findViewById(R.id.rateValue);
         date = (TextView)findViewById(R.id.txtDateTimeValue);
+        duration = (TextView)findViewById(R.id.txtDurationValue);
         Intent in = getIntent();
         title.setText(in.getStringExtra("title"));
         role.setText(in.getStringExtra("role"));
         rate.setText(in.getStringExtra("rate"));
         date.setText(in.getStringExtra("date"));
+        duration.setText(in.getStringExtra("duration"));
         String jobId = in.getStringExtra("id");
 
         final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
@@ -80,6 +86,16 @@ public class InterestReceviedListActivity extends Activity {
                     collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
                     isShow = false;
                 }
+            }
+        });
+        ImageView back = (ImageView)findViewById(R.id.btnback);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent in = new Intent(getApplicationContext(), DashboardActivity.class);
+                if(!InterestedListAdapter.response.equals("0"))
+                    in.putExtra("dashbdJs",InterestedListAdapter.response.toString());
+                startActivity(in);
             }
         });
 
@@ -171,13 +187,16 @@ public class InterestReceviedListActivity extends Activity {
                                 JSONObject jObject = null;
                                 for (int i = 0; i < jArray.length(); i++) {
                                     jObject = jArray.getJSONObject(i);
+                                    String id = jObject.getString("id");
                                     String resource = jObject.getString("resource");
                                     JSONObject jObj = new JSONObject(resource);
                                     String name = jObj.getString("name");
                                     String preferredRate = jObj.getString("preferredRate");
-                                    String id = jObj.getString("id");
                                     String experience = jObj.getString("experience");
                                     String imageUrl = jObj.getString("imageUrl");
+                                    String miniCv = "null";
+                                    if((jObj.getString("miniCV"))!= null && resource.contains("miniCV"))
+                                        miniCv = jObj.getString("miniCV");
                                     String averageRating = jObj.getString("averageRating");
 
                                     String feedback = jObj.getString("feedback");
@@ -192,40 +211,32 @@ public class InterestReceviedListActivity extends Activity {
                                         feedbackListItems.add(feedbackListItem);
                                     }
                                     interestListItem = new InterestListItem(name, "£"+preferredRate+"/Hour",
-                                            id, experience, imageUrl, Integer.valueOf(averageRating), R.drawable.female_1,status,
-                                            feedbackListItems);
+                                            id, experience, imageUrl, Float.valueOf(averageRating), R.drawable.female_1,status,
+                                            miniCv,feedbackListItems);
                                     interestListItems.add(interestListItem);
                                 }
                                 interestedListAdapter.notifyDataSetChanged();
                                 System.out.println("responseFromLoginPost id:" + userId);
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                Toast.makeText(AntApplication._appContext,
-                                        "Error, Please try again.",
-                                        Toast.LENGTH_LONG).show();
+                                showToastMsg("Error, Please try again.",0);
                             }
                         }
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     if(error instanceof TimeoutError || error instanceof NoConnectionError){
-                        Toast.makeText(AntApplication._appContext,
-                                "Network Timeout Error or No internet, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                        showToastMsg("Network Timeout Error or No internet, Please try again.",0);
 
-                    }  else if(error.getMessage().contains("AuthFailureError")) {
-                        Toast.makeText(AntApplication._appContext,
-                                "Token Expired, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                    } else if(error.toString().contains("AuthFailureError")) {
+                        showToastMsg("Token Expired, Please try again.",0);
+                        PreferenceHelper.setUserLogin_PREF(AntApplication._appContext,false);
                         Intent in = new Intent(InterestReceviedListActivity.this, LoginActivity.class);
                         startActivity(in);
                         finish();
                     }
                     else {
-                        Toast.makeText(AntApplication._appContext,
-                                "Error, Please try again.",
-                                Toast.LENGTH_LONG).show();
-
+                        showToastMsg("Error, Please try again.",0);
                     }
                     System.out.println("responseFromLogin2 err"
                             + error);
@@ -253,9 +264,7 @@ public class InterestReceviedListActivity extends Activity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(AntApplication._appContext,
-                    "Error, Please try again.",
-                    Toast.LENGTH_LONG).show();
+            showToastMsg("Error, Please try again.",0);
         }
     }
     @Override
@@ -265,5 +274,13 @@ public class InterestReceviedListActivity extends Activity {
         in.putExtra("dashbdJs",InterestedListAdapter.response.toString());
         startActivity(in);
         //super.onBackPressed();
+    }
+    public void showToastMsg(String msg,int status){
+        if(status == 0)
+            Toasty.error(InterestReceviedListActivity.this, msg,
+                    Toast.LENGTH_LONG, true).show();
+        else
+            Toasty.success(InterestReceviedListActivity.this, msg,
+                    Toast.LENGTH_LONG, true).show();
     }
 }

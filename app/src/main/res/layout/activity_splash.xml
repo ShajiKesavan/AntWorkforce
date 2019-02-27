@@ -3,18 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorPrimaryLight"
+    android:background="#70b9f4"
     android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:foregroundGravity="center"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@drawable/splash_icon" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -22,5 +22,6 @@
         android:layout_below="@+id/imageView2"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:text="ANT WorkForce Loading.." />
+        android:textColor="@color/cardview_light_background"
+        android:text="Loading.." />
 </RelativeLayout>

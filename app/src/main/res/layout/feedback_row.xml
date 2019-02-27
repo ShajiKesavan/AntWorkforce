@@ -18,6 +18,7 @@
     <com.sample.poc.Widgets.CircularImageView
         android:id="@+id/img_pic"
         android:layout_width="30dp"
+        android:visibility="gone"
         android:layout_height="30dp"
         android:src="@drawable/unknown" />
 
@@ -27,8 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
-            android:visibility="gone"
-            android:layout_marginLeft="6dp"/>
+            android:visibility="gone"/>
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
@@ -38,16 +38,17 @@
             android:max="5"
             android:rating="5"
             android:stepSize="1"
-            android:layout_marginLeft="6dp"
             style = "?android:attr/ratingBarStyleSmall"/>
+
+        <TextView
+            android:id="@+id/feedback_value"
+            android:text="Experienced person with good behavior"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:textAllCaps="false"/>
 
     </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/feedback_value"
-        android:text="Experienced person with good behavior"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"/>
 </LinearLayout>

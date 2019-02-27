@@ -9,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.sample.poc.Activities.AntApplication;
 import com.sample.poc.Activities.DashboardActivity;
 import com.sample.poc.Adapter.AcceptedJobsAdapter;
 import com.sample.poc.Adapter.CompletedJobsAdapter;
@@ -43,6 +45,7 @@ public class CompletedJobsEmployeeFragment extends Fragment {
     CompletedJobsAdapter completedJobsEmployeeAdapter;
     PostedJobsAdapter postedJobsEmployeeAdapter;
     LinearLayout emptyCompleted,emptyPosted;
+    TextView titleCmptd, titlePosted;
 
     public CompletedJobsEmployeeFragment() {
         // Required empty public constructor
@@ -62,6 +65,8 @@ public class CompletedJobsEmployeeFragment extends Fragment {
         listpostedJobs = (RecyclerView) parentView.findViewById(R.id.listpostedJobs);
         emptyCompleted = (LinearLayout) parentView.findViewById(R.id.empty_completed);
         emptyPosted = (LinearLayout) parentView.findViewById(R.id.empty_posted);
+        titleCmptd = (TextView) parentView.findViewById(R.id.title_completed);
+        titlePosted = (TextView) parentView.findViewById(R.id.title_posted);
         completedEmployeeJobItems = new ArrayList<>();
         postedEmployeeJobItems = new ArrayList<>();
 
@@ -92,6 +97,7 @@ public class CompletedJobsEmployeeFragment extends Fragment {
             PostedJobItems postedJobItem;
             JSONArray jArray = new JSONArray(postResponse);
             JSONObject jObject = null;
+            titlePosted.setText(AntApplication._appContext.getResources().getString(R.string.posted_job)+"("+jArray.length()+")");
             if(jArray.length()>0) {
                 for (int i = 0; i < jArray.length(); i++) {
                     jObject = jArray.getJSONObject(i);
@@ -129,12 +135,13 @@ public class CompletedJobsEmployeeFragment extends Fragment {
     public void getCompletedJobs(final String postResponse){
 
         try {
-            emptyCompleted.setVisibility(View.GONE);
+            emptyCompleted.setVisibility(View.VISIBLE);
             listCompletedJobs.setVisibility(View.VISIBLE);
-            System.out.println("responseFromcmpltd2 :" + postResponse.toString());
+            System.out.println("responseFromcmpltd2 :" + postResponse);
             CompletedJobItem completedJobItem;
             JSONArray jArray = new JSONArray(postResponse);
             JSONObject jObject = null;
+            titleCmptd.setText(AntApplication._appContext.getResources().getString(R.string.completed_shift)+"("+jArray.length()+")");
             if(jArray.length()>0) {
 
                 for (int i = 0; i < jArray.length(); i++) {
@@ -154,13 +161,11 @@ public class CompletedJobsEmployeeFragment extends Fragment {
                 }
                 completedJobsEmployeeAdapter.notifyDataSetChanged();
             } else {
-                emptyCompleted.setVisibility(View.VISIBLE);
-                listCompletedJobs.setVisibility(View.GONE);
+                emptyCompleted.setVisibility(View.GONE);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            emptyCompleted.setVisibility(View.VISIBLE);
-            listCompletedJobs.setVisibility(View.GONE);
+            emptyCompleted.setVisibility(View.GONE);
         }
 
     }

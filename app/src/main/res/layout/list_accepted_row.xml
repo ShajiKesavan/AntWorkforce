@@ -24,6 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:textAllCaps="false"
                 android:text="Confirmed"/>
         </LinearLayout>
         <View
@@ -41,121 +42,44 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView
-                android:id="@+id/txtDateTime"
-                android:text="@string/date_time"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAllCaps="false"
-                android:textStyle="bold"/>
-            <TextView
                 android:id="@+id/txtDateTimeValue"
                 android:text="28/07/2018 08:00"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="6dp"
                 android:textStyle="bold"/>
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal">
-        <TextView
-            android:id="@+id/duration"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/duration"
-            android:textAllCaps="false"/>
-
-        <TextView
-            android:id="@+id/durationValue"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="6dp"
-            android:text="8 hours"
-            android:textAllCaps="false" />
-            <LinearLayout
-                android:id="@+id/more_ln"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="end">
             <TextView
-                android:id="@+id/more"
-                android:text="@string/read_more"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:visibility="visible"
-                android:layout_marginRight="5dp"
-                android:textColor="@color/link"
-                android:layout_marginLeft="15dp"
-                />
-            </LinearLayout>
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/ln_more"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp">
-            <TextView
-                android:id="@+id/role"
-                android:text="@string/role"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAllCaps="false"/>
-            <TextView
-                android:id="@+id/roleValue"
-                android:text="registered mental health nurse(RMN)"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:singleLine="true"
-                android:layout_marginLeft="6dp"/>
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/rate"
+                android:id="@+id/durationValue"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="@string/rate"
+                android:layout_marginLeft="6dp"
+                android:text="8 hours"
+                android:textStyle="bold"
                 android:textAllCaps="false" />
-
             <TextView
                 android:id="@+id/rateValue"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="6dp"
                 android:text="$20.50/hour"
+                android:textStyle="bold"
                 android:textAllCaps="false" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="end">
 
-                <TextView
-                    android:id="@+id/less"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="6dp"
-                    android:layout_marginRight="5dp"
-                    android:text="@string/read_less"
-                    android:textAllCaps="false"
-                    android:textColor="@color/link" />
-            </LinearLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/roleValue"
+                android:text="registered mental health nurse(RMN)"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:singleLine="true"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -168,14 +92,14 @@
                 android:text="@string/employer"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:visibility="gone"
                 android:textAllCaps="false"/>
             <TextView
                 android:id="@+id/employerValue"
-                android:text=""
+                android:text="name,addresss"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:layout_marginLeft="6dp"/>
+                android:textAllCaps="false"/>
         </LinearLayout>
 
         <LinearLayout

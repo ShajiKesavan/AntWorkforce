@@ -8,8 +8,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.sample.poc.Activities.AntApplication;
 import com.sample.poc.Activities.DashboardActivity;
 import com.sample.poc.Adapter.CompletedJobsAdapter;
 import com.sample.poc.Adapter.ListJobsAdapter;
@@ -32,8 +35,10 @@ public class AvailableShiftsFragment extends Fragment {
 
     private List<ListJobsItem> listJobsItems = new ArrayList<>();
     RecyclerView listJobs;
-    ListJobsAdapter listJobsAdapter;
+    public static ListJobsAdapter listJobsAdapter;
     TextView empty;
+    public static AvailableShiftsFragment instance;
+    public static boolean mRefreshNow = false;
 
     public AvailableShiftsFragment() {
         // Required empty public constructor
@@ -50,6 +55,7 @@ public class AvailableShiftsFragment extends Fragment {
         View parentView = inflater.inflate(R.layout.fragment_list_jobs, container, false);
         listJobs = (RecyclerView) parentView.findViewById(R.id.listJobs);
         empty = (TextView) parentView.findViewById(R.id.empty);
+        instance = this;
         listJobsItems = new ArrayList<>();
 
         listJobsAdapter = new ListJobsAdapter(listJobsItems, getActivity());
@@ -62,6 +68,9 @@ public class AvailableShiftsFragment extends Fragment {
         return parentView;
     }
 
+    public static AvailableShiftsFragment getinstance() {
+        return instance;
+    }
 
     private void preparePostedJobData() {
         ListJobsItem listJobsItem = new ListJobsItem("28/07/2018", "08:00", "Registered Mental Health Nurse",
@@ -120,5 +129,23 @@ public class AvailableShiftsFragment extends Fragment {
             empty.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    public static void refreshAll(){
+        try {
+            getinstance().onResume();
+            listJobsAdapter.notifyDataSetChanged();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onResume() {
+        if(mRefreshNow) {
+            System.out.println("cmplt onResume:"+mRefreshNow);
+            mRefreshNow = false;
+            getListJobs(DashboardActivity.postsJs);
+        }
+        super.onResume();
     }
 }

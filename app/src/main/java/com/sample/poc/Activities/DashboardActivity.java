@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import es.dmoral.toasty.Toasty;
 
 import static com.sample.poc.Utilities.Constants.EMPLOYEE;
 import static com.sample.poc.Utilities.Constants.EMPLOYER;
@@ -262,23 +265,17 @@ public class DashboardActivity extends AppCompatActivity
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     if(error instanceof TimeoutError || error instanceof NoConnectionError){
-                        Toast.makeText(AntApplication._appContext,
-                                "Network Timeout Error or No internet, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                        showToastMsg("Network Timeout Error or No internet, Please try again.",0);
 
                     } else if(error.toString().contains("AuthFailureError")) {
-                        Toast.makeText(AntApplication._appContext,
-                                "Token Expired, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                        showToastMsg("Token Expired, Please try again.",0);
+                        PreferenceHelper.setUserLogin_PREF(AntApplication._appContext,false);
                         Intent in = new Intent(DashboardActivity.this, LoginActivity.class);
                         startActivity(in);
                         finish();
                     }
                     else {
-                        Toast.makeText(AntApplication._appContext,
-                                "Error, Please try again.",
-                                Toast.LENGTH_LONG).show();
-
+                        showToastMsg("Error, Please try again.",0);
                     }
                     System.out.println("responseFromLogin2 Dashbddd err"
                             + error);
@@ -306,9 +303,8 @@ public class DashboardActivity extends AppCompatActivity
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(AntApplication._appContext,
-                    "Error, Please try again.",
-                    Toast.LENGTH_LONG).show();
+            showToastMsg("Error, Please try again.",0);
+
         }
     }
 
@@ -398,23 +394,17 @@ public class DashboardActivity extends AppCompatActivity
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     if(error instanceof TimeoutError || error instanceof NoConnectionError){
-                        Toast.makeText(AntApplication._appContext,
-                                "Network Timeout Error or No internet, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                        showToastMsg("Network Timeout Error or No internet, Please try again.",0);
 
                     } else if(error.toString().contains("AuthFailureError")) {
-                        Toast.makeText(AntApplication._appContext,
-                                "Token Expired, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                        showToastMsg("Token Expired, Please try again.",0);
+                        PreferenceHelper.setUserLogin_PREF(AntApplication._appContext,false);
                         Intent in = new Intent(DashboardActivity.this, LoginActivity.class);
                         startActivity(in);
                         finish();
                     }
                     else {
-                        Toast.makeText(AntApplication._appContext,
-                                "Error, Please try again.",
-                                Toast.LENGTH_LONG).show();
-
+                        showToastMsg("Error, Please try again.",0);
                     }
                     System.out.println("responseFromLogin3 Dashbddd err"
                             + error);
@@ -442,9 +432,7 @@ public class DashboardActivity extends AppCompatActivity
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(AntApplication._appContext,
-                    "Error, Please try again.",
-                    Toast.LENGTH_LONG).show();
+            showToastMsg("Error, Please try again.",0);
         }
     }
 
@@ -482,6 +470,15 @@ public class DashboardActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
+    }
+
+    public void showToastMsg(String msg,int status){
+        if(status == 0)
+            Toasty.error(DashboardActivity.this, msg,
+                    Toast.LENGTH_LONG, true).show();
+        else
+            Toasty.success(DashboardActivity.this, msg,
+                    Toast.LENGTH_LONG, true).show();
     }
 
 }

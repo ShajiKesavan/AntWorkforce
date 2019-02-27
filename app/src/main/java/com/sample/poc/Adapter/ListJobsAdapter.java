@@ -29,6 +29,7 @@ import com.sample.poc.Activities.AntApplication;
 import com.sample.poc.Activities.DashboardActivity;
 import com.sample.poc.Activities.LoginActivity;
 import com.sample.poc.Activities.NewJobPostingActivity;
+import com.sample.poc.Fragments.AvailableShiftsFragment;
 import com.sample.poc.Items.ListJobsItem;
 import com.sample.poc.R;
 import com.sample.poc.Utilities.Constants;
@@ -40,6 +41,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import es.dmoral.toasty.Toasty;
 
 /**
  * Created by 1013373 on 8/3/2018.
@@ -99,6 +102,15 @@ public class ListJobsAdapter extends RecyclerView.Adapter<ListJobsAdapter.MyView
         holder.employerValue.setText(listJobsItem.getEmployer()+" ,"+(listJobsItem.getStartTime()).split("@@")[1]);
         holder.distanceValue.setText(listJobsItem.getDistance());
         holder.description.setText(listJobsItem.getDescription());
+        String rate = listJobsItem.getRate().split("/")[0];
+        if(rate.contains(".")){
+            int indexOfDecimal = rate.indexOf(".");
+            holder.rate1.setText(rate.substring(1, indexOfDecimal));
+            holder.rate2.setText(rate.substring(indexOfDecimal+1));
+        } else {
+            holder.rate1.setText(rate.substring(1));
+            holder.rate2.setText("0");
+        }
 
         final String udata=context.getResources().getString(R.string.read_more);
         final SpannableString content = new SpannableString(udata);
@@ -138,13 +150,13 @@ public class ListJobsAdapter extends RecyclerView.Adapter<ListJobsAdapter.MyView
                 rateDec = holder.rate2.getText().toString();
                 if(TextUtils.isEmpty(rateInt) || Integer.valueOf(rateInt)==0){
                     //holder.rate1.setError(context.getString(R.string.error_field_required));
-                    Toast.makeText(context,"Please enter rate",Toast.LENGTH_LONG).show();
+                    Toasty.error(context,"Please enter rate",Toast.LENGTH_LONG,true).show();
                     Animation shake = AnimationUtils.loadAnimation(context,
                             R.anim.animation_shake);
                     holder.rate1.startAnimation(shake);
                 } else if(TextUtils.isEmpty(rateDec)){
                     //holder.rate2.setError(context.getString(R.string.error_field_required));
-                    Toast.makeText(context,"Please enter rate",Toast.LENGTH_LONG).show();
+                    Toasty.error(context,"Please enter rate",Toast.LENGTH_LONG,true).show();
                     Animation shake = AnimationUtils.loadAnimation(context,
                             R.anim.animation_shake);
                     holder.rate2.startAnimation(shake);
@@ -187,30 +199,52 @@ public class ListJobsAdapter extends RecyclerView.Adapter<ListJobsAdapter.MyView
                         @Override
                         public void onResponse(JSONObject response) {
                             System.out.println("responseFrom feedback:" + response.toString());
-                            Intent in = new Intent(context, DashboardActivity.class);
+                            Toasty.success(AntApplication._appContext,
+                                    "Successfully posted",
+                                    Toast.LENGTH_LONG,true).show();
+                            /*Intent in = new Intent(context, DashboardActivity.class);
                             in.putExtra("dashbdJs",response.toString());
-                            context.startActivity(in);
+                            context.startActivity(in);*/
+                            try {
+                                JSONObject jObject = null;
+                                try {
+                                    String res = response.getString("resource");
+                                    jObject = new JSONObject(res);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    DashboardActivity.postsJs = jObject.getString("posts");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                AvailableShiftsFragment.mRefreshNow = true;
+                                AvailableShiftsFragment.refreshAll();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
                         }
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     if(error instanceof TimeoutError || error instanceof NoConnectionError){
-                        Toast.makeText(AntApplication._appContext,
+                        Toasty.error(AntApplication._appContext,
                                 "Network Timeout Error or no internet, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG,true).show();
 
                     }else if(error.toString().contains("AuthFailureError")) {
-                        Toast.makeText(AntApplication._appContext,
+                        Toasty.error(AntApplication._appContext,
                                 "Token Expired, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG,true).show();
+                        PreferenceHelper.setUserLogin_PREF(AntApplication._appContext,false);
                         Intent in = new Intent(context, LoginActivity.class);
                         context.startActivity(in);
                     }
                     else {
-                        Toast.makeText(AntApplication._appContext,
+                        Toasty.error(AntApplication._appContext,
                                 "Server Error, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG,true).show();
                     }
                     System.out.println("responseFromLogin err"
                             + error);
@@ -245,9 +279,9 @@ public class ListJobsAdapter extends RecyclerView.Adapter<ListJobsAdapter.MyView
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(AntApplication._appContext,
+            Toasty.error(AntApplication._appContext,
                     "Error, Please try again.",
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG,true).show();
         }
 
     }

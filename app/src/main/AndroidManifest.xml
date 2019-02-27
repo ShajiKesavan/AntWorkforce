@@ -38,7 +38,7 @@
         <activity
             android:name=".Activities.InterestReceviedListActivity"
             android:label="@string/list_of_interest"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/title_activity_main"

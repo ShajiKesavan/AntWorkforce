@@ -48,6 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.dmoral.toasty.Toasty;
+
 /**
  * Created by 1013373 on 8/3/2018.
  */
@@ -59,7 +61,7 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView txtDateTimeValue, roleValue, rateValue,durationValue,txtNameValue;
-        Spinner spinnerStatus;
+        Button accept,reject;
 
         public MyViewHolder(View view) {
             super(view);
@@ -68,11 +70,8 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
             rateValue = (TextView) view.findViewById(R.id.rateValue);
             durationValue = (TextView) view.findViewById(R.id.durationValue);
             txtNameValue = (TextView) view.findViewById(R.id.txtNameValue);
-            spinnerStatus=(Spinner)view.findViewById(R.id.spinnerStatus);
-            String[] data= {"Select","Reject","Approve"};
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,android.R.layout.simple_spinner_item,data);
-            spinnerStatus .setAdapter(adapter);
-            adapter.notifyDataSetChanged();
+            accept=(Button) view.findViewById(R.id.btnAccept);
+            reject=(Button) view.findViewById(R.id.btnReject);
 
         }
     }
@@ -100,18 +99,20 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
         holder.durationValue.setText(completedJobItem.getDuration());
         holder.txtNameValue.setText(completedJobItem.getName());
 
-        holder.spinnerStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        holder.reject.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(i > 0) {
-                    String status= adapterView.getItemAtPosition(i).toString();
-                    ShowFeedbackDialog(completedJobItem.getStartTime(),status);
-                }
+            public void onClick(View view) {
+                String status= AntApplication._appContext.getResources().getString(R.string.reject);
+                ShowFeedbackDialog(completedJobItem.getStartTime(),status);
             }
+        });
 
+
+        holder.accept.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
+            public void onClick(View view) {
+                String status= AntApplication._appContext.getResources().getString(R.string.accept);
+                ShowFeedbackDialog(completedJobItem.getStartTime(),status);
             }
         });
 
@@ -133,6 +134,7 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
         pgBar = (ProgressBar)alertLayout.findViewById(R.id.progressBar);
         mSubmit = (Button)alertLayout.findViewById(R.id.button1);
         mCancel = (Button)alertLayout.findViewById(R.id.button2);
+        mSubmit.setText(status);
         final AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle(context.getResources().getString(R.string.enter_feedback));
         // this is set the view from XML inside AlertDialog
@@ -150,7 +152,7 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
                 double rating = mRating.getRating();
                 if(status.equals("Reject")) {
                     if (TextUtils.isEmpty(mNotes.getText().toString())) {
-                        mNotes.setError(AntApplication._appContext.getString(R.string.error_field_required));
+                        mNotes.setError(AntApplication._appContext.getString(R.string.error_field));
                         v = mNotes;
                         v.requestFocus();
                     } else {
@@ -213,21 +215,22 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     if(error instanceof TimeoutError || error instanceof NoConnectionError){
-                        Toast.makeText(AntApplication._appContext,
+                        Toasty.error(AntApplication._appContext,
                                 "Network Timeout Error or no internet, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG,true).show();
 
                     }else if(error.toString().contains("AuthFailureError")) {
-                        Toast.makeText(AntApplication._appContext,
+                        Toasty.error(AntApplication._appContext,
                                 "Token Expired, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG,true).show();
+                        PreferenceHelper.setUserLogin_PREF(AntApplication._appContext,false);
                         Intent in = new Intent(context, LoginActivity.class);
                         context.startActivity(in);
                     }
                     else {
-                        Toast.makeText(AntApplication._appContext,
+                        Toasty.error(AntApplication._appContext,
                                 "Server Error, Please try again.",
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG,true).show();
                     }
                     pgBar.setVisibility(View.GONE);
                     System.out.println("responseFromLogin err"
@@ -263,9 +266,9 @@ public class CompletedJobsAdapter extends RecyclerView.Adapter<CompletedJobsAdap
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(AntApplication._appContext,
+            Toasty.error(AntApplication._appContext,
                     "Error, Please try again.",
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG,true).show();
             pgBar.setVisibility(View.GONE);
         }
 

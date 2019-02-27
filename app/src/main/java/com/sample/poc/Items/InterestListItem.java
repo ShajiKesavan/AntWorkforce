@@ -14,13 +14,14 @@ public class InterestListItem {
     private String experience;
     private String imageURL;
     private String status;
-    private int rating;
+    private String miniCv;
+    private float rating;
     private int imageResource;
     private ArrayList<FeedbackListItem> feedbackListItems;
 
 
     public InterestListItem(String name, String acceptableRate, String regNo, String experience, String imageURL,
-                            int rating,int imageResource,String status,ArrayList<FeedbackListItem> feedbackListItems) {
+                            float rating,int imageResource,String status,String miniCv,ArrayList<FeedbackListItem> feedbackListItems) {
         this.name = name;
         this.acceptableRate = acceptableRate;
         this.regNo = regNo;
@@ -29,6 +30,7 @@ public class InterestListItem {
         this.rating = rating;
         this.imageResource=imageResource;
         this.status=status;
+        this.miniCv=miniCv;
         this.feedbackListItems=feedbackListItems;
     }
 
@@ -60,10 +62,13 @@ public class InterestListItem {
         return status;
     }
 
-    public int getRating() {
-        return rating;
+    public String getMiniCv() {
+        return miniCv;
     }
 
+    public float getRating() {
+        return rating;
+    }
 
     public ArrayList<FeedbackListItem> getFeedbackListItems() {
         return feedbackListItems;
